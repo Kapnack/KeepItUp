@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8525281d93f9a4b9272138e5d7178c, type: 3}
+  m_Name: ShopState
+  m_EditorClassIdentifier: 
+  assetsToBuy:
+  - {fileID: 11400000, guid: ffbc7b3b79741c14a9d12d5aaa832f18, type: 2}
+  - {fileID: 11400000, guid: 4d5f43689927eb5448e59ca346daf397, type: 2}
+  - {fileID: 11400000, guid: 5a64f2382df9fc54994873d220cf7570, type: 2}
+  - {fileID: 11400000, guid: 76f1adb290ee1704196dd2c319c44530, type: 2}
+  - {fileID: 11400000, guid: 32ffd2961a00803458643e537e666df5, type: 2}
+  - {fileID: 11400000, guid: dc226b50c936de44d955801997482060, type: 2}
+  variables: {fileID: 11400000, guid: 83b457f955d997b4795b2c86e85d37a3, type: 2}
+  playerCurrentSkin: {fileID: 11400000, guid: b4a2675e4659ebf449fec6179ce7d771, type: 2}
