@@ -16,6 +16,9 @@ using Random = UnityEngine.Random;
 
 public class GameplayManager : MonoBehaviour
 {
+    [Header("Game Time")]
+    [SerializeField] private float gameTime = 60;
+    
     [Header("Player Settings")] [SerializeField]
     private Currency currentCurrency;
 
@@ -89,7 +92,7 @@ public class GameplayManager : MonoBehaviour
     {
         ITimer timer = ServiceProvider.GetService<ITimer>();
 
-        timer.SetUpTimer(120);
+        timer.SetUpTimer(gameTime);
         timer.TimeIsUp += OnTimeEnded;
 
         SpawnPoint();

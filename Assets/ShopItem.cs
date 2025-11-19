@@ -1,4 +1,5 @@
 using System;
+using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
 using TMPro;
@@ -18,7 +19,7 @@ public class ShopItem : MonoBehaviour
     [SerializeField] private TMP_Text text;
     [SerializeField] private SpriteAtlas atlas;
     [SerializeField] private SpriteAtlas buttonAtlas;
-
+    [SerializeField] private ShopVariables shopVariables;
     private CentralizedEventSystem _eventSystem;
 
     private const string BuyText = "Buy";

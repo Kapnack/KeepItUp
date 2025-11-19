@@ -1,3 +1,4 @@
+using Systems.EventSystem;
 using TMPro;
 using UnityEngine;
 
@@ -7,7 +8,6 @@ public class Timer : MonoBehaviour, ITimer
     private string _timerFormat;
 
     [SerializeField] private float timerTime;
-
     public event TimeIsUp TimeIsUp;
 
     private float TimerTime
@@ -42,7 +42,10 @@ public class Timer : MonoBehaviour, ITimer
     private void Update()
     {
         if (timerTime < 0)
+        {
+            TimeIsUp?.Invoke();
             return;
+        }
 
         TimerTime -= Time.deltaTime;
     }

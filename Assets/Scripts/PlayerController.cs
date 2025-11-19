@@ -20,9 +20,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     [SerializeField] private float waitingTillSwipe = 1.5f;
 
     private bool _isHolding;
-
     private Vector2 _initialPos;
-
     private float _updatePosTime;
 
     private void Awake()
@@ -31,7 +29,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
 #if UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         TouchSimulation.Enable();
-        Debug.Log("Touch Simulation enabled for Editor (mouse acts like touch).");
 #endif
     }
 
@@ -69,13 +66,13 @@ public class PlayerController : MonoBehaviour, IPlayerController
         {
             Vector3 accel = Accelerometer.current.acceleration.ReadValue();
             float tilt = Mathf.Clamp(accel.x * 3f, -1, 1f);
-            _eventSystem.Get<Tilting>()?.Invoke(tilt);
+            _eventSystem?.Get<Tilting>()?.Invoke(tilt);
         }
 #endif
         
         if (!_isHolding)
             return;
-        
+
         if (Time.time < _updatePosTime)
             return;
 
@@ -83,7 +80,9 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _updatePosTime = Time.time + waitingTillSwipe;
     }
 
-    public Vector2 GetInputPos() => _inputSystem.Player.PrimaryPosition.ReadValue<Vector2>();
+    public Vector2 GetInputPos() => 
+        _inputSystem.Player.PrimaryPosition.ReadValue<Vector2>();
+
 
     private void OnPressStarted(InputAction.CallbackContext context)
     {
@@ -110,6 +109,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         }
 
         _eventSystem?.Get<StopHolding>()?.Invoke();
+        _isHolding = false;
     }
 
     private void OnPauseStarted(InputAction.CallbackContext context)
@@ -125,10 +125,10 @@ public delegate void StopHolding();
 
 public interface IPlayerController
 {
-    public event Swipe OnSwipePerformed;
-    public event Holding OnHolding;
-    public event StopHolding OnStopHolding;
-    public event Tilting OnTilting;
+    event Swipe OnSwipePerformed;
+    event Holding OnHolding;
+    event StopHolding OnStopHolding;
+    event Tilting OnTilting;
 
-    public Vector2 GetInputPos();
+    Vector2 GetInputPos();
 }

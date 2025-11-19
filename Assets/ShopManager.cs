@@ -2,6 +2,7 @@ using System;
 using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,11 +13,16 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
     [SerializeField] private ShopVariables shopVariables;
     [SerializeField] private Button returnButton;
+    [SerializeField] private TMP_Text currentPointsText;
+     private string _currentMoneyTextFormat;
 
     private CentralizedEventSystem _eventSystem;
 
     private void Awake()
     {
+        _currentMoneyTextFormat =  currentPointsText.text;
+        currentPointsText.text = string.Format(_currentMoneyTextFormat, shopVariables.CurrentPoints);
+        
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
         returnButton.onClick.AddListener(OnReturn);
@@ -41,6 +47,7 @@ public class ShopManager : MonoBehaviour
             return;
 
         shopVariables.CurrentPoints -= shopVariables.BallsPrice;
+        currentPointsText.text = string.Format(_currentMoneyTextFormat, shopVariables.CurrentPoints);
         skin.unlocked = true;
         callback?.Invoke();
     }

@@ -14,9 +14,10 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rb;
     private CircleCollider2D _collider;
     private CentralizedEventSystem _eventSystem;
-    
-    private bool _isMoving;
-    
+
+    private bool _isMoving; // true when holding
+    private float _tiltDirection;
+
     private void Awake()
     {
         _controller = GetComponent<IPlayerController>();
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour
         eventSystem.AddListener<Swipe>(Jump);
         eventSystem.AddListener<Holding>(IsMoving);
         eventSystem.AddListener<StopHolding>(IsNotMoving);
+        eventSystem.AddListener<Tilting>(OnTilt);
     }
 
     private void OnDisable()
@@ -41,20 +43,37 @@ public class Player : MonoBehaviour
         eventSystem.RemoveListener<Swipe>(Jump);
         eventSystem.RemoveListener<Holding>(IsMoving);
         eventSystem.RemoveListener<StopHolding>(IsNotMoving);
+        eventSystem.RemoveListener<Tilting>(OnTilt);
     }
 
     private void IsMoving() => _isMoving = true;
-    private void IsNotMoving() => _isMoving = false;
+    private void IsNotMoving()
+    {
+        _isMoving = false;
+        _tiltDirection = 0;
+    }
+
+    private void OnTilt(float tilt)
+    {
+        if (!_isMoving) // tilt only when NOT holding
+            _tiltDirection = tilt;
+    }
 
     private void Update()
     {
-        if (!_isMoving)
+        // If holding finger → move by screen side, not tilt
+        if (_isMoving)
+        {
+            float dir = _controller.GetInputPos().x > Screen.width * 0.5f ? 1 : -1;
+            _rb.AddForce(new Vector2(movementSpeed * dir * Time.deltaTime, 0), ForceMode2D.Force);
             return;
+        }
 
-        float dir = _controller.GetInputPos().x > Screen.width * 0.5f ? 1 : -1;
-
-        _rb.AddForce(new Vector2(movementSpeed * dir * Time.deltaTime, 0),
-            ForceMode2D.Force);
+        // Tilt movement (only if not holding)
+        if (Mathf.Abs(_tiltDirection) > 0.1f)
+        {
+            _rb.AddForce(new Vector2(_tiltDirection * movementSpeed * Time.deltaTime, 0), ForceMode2D.Force);
+        }
     }
 
     private void Jump(Vector2 dir)
