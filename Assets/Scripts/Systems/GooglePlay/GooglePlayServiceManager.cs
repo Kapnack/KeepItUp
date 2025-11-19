@@ -1,5 +1,8 @@
-﻿using GooglePlayGames;
+﻿#if UNITY_ANDROID || UNITY_EDITOR
+using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using Systems.EventSystem;
+#endif
 using UnityEngine;
 
 namespace Systems.GooglePlay

@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71fed4db9cb1da24f84f11ad4c9cf2ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameTime: 10
+  gameTime: 90
   currentCurrency: {fileID: 11400000, guid: 83b457f955d997b4795b2c86e85d37a3, type: 2}
   ballsSpriteAtlas: {fileID: 100100200, guid: 6e3ced3565eabbe4a8a33940e3f1fe26, type: 3}
   skinUse: {fileID: 11400000, guid: b4a2675e4659ebf449fec6179ce7d771, type: 2}

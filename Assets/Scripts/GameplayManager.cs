@@ -10,7 +10,6 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.U2D;
 using Random = UnityEngine.Random;
 
@@ -19,8 +18,8 @@ public class GameplayManager : MonoBehaviour
     [Header("Game Time")]
     [SerializeField] private float gameTime = 60;
     
-    [Header("Player Settings")] [SerializeField]
-    private Currency currentCurrency;
+    [Header("Player Settings")] 
+    [SerializeField] private Currency currentCurrency;
 
     [SerializeField] private SpriteAtlas ballsSpriteAtlas;
     [SerializeField] private PlayerCurrentSkin skinUse;
@@ -37,9 +36,10 @@ public class GameplayManager : MonoBehaviour
     private CentralizedEventSystem _eventSystem;
     private bool _playerDied;
 
-
     [SerializeField] private int minPointsRequired = 20;
     private int _currentPoints;
+
+    private AsyncOperationHandle<GameObject> _loadHandle;
 
     private void Awake()
     {
@@ -47,29 +47,28 @@ public class GameplayManager : MonoBehaviour
         scoreText.text = string.Format(_scoreTextFormat, _currentPoints, minPointsRequired);
         
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
-
         _mainCam = Camera.main;
 
         _pool = new Pool<IPointsSetUp>(pointsObject, transform);
         _pool.InitializeAll();
+        
+        _eventSystem.AddListener<AddPoint>(OnAddPoints);
 
         StartCoroutine(CreatePlayer());
     }
 
     private IEnumerator CreatePlayer()
     {
-        AsyncOperationHandle<GameObject> operation =
-            Addressables.LoadAssetAsync<GameObject>(prefab);
+        _loadHandle = Addressables.LoadAssetAsync<GameObject>(prefab);
+        yield return _loadHandle;
 
-        yield return operation;
-
-        if (operation.Status != AsyncOperationStatus.Succeeded)
+        if (_loadHandle.Status != AsyncOperationStatus.Succeeded)
         {
             Debug.LogError("Failed to load player prefab.");
             yield break;
         }
 
-        _playerGo = Instantiate(operation.Result);
+        _playerGo = Instantiate(_loadHandle.Result);
 
         SceneManager.MoveGameObjectToScene(_playerGo, gameObject.scene);
 
@@ -79,12 +78,8 @@ public class GameplayManager : MonoBehaviour
         PlayerAssetCreator creator = _playerGo.GetComponent<PlayerAssetCreator>();
 
         string skinName = Enum.GetName(typeof(Playerskins), skinUse.currentSkin.skinName);
+        creator.BallSprite.sprite = ballsSpriteAtlas.GetSprite(skinName);
 
-        creator.BallSprite.sprite =
-            ballsSpriteAtlas.GetSprite(skinName);
-
-        _eventSystem.AddListener<AddPoint>(OnAddPoints);
-        
         Destroy(creator);
     }
 
@@ -100,11 +95,9 @@ public class GameplayManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_playerPos)
-            return;
+        if (!_playerPos) return;
 
         Vector3 viewportPos = _mainCam.WorldToViewportPoint(_playerPos.position);
-
         _playerDied = viewportPos.y < 0f;
 
         if (_playerDied)
@@ -113,7 +106,11 @@ public class GameplayManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        Addressables.ReleaseInstance(_playerGo);
+        if (_playerGo != null)
+            Destroy(_playerGo);
+        
+        if (_loadHandle.IsValid())
+            Addressables.Release(_loadHandle);
     }
 
     private void OnAddPoints(int points)
@@ -125,6 +122,7 @@ public class GameplayManager : MonoBehaviour
     private void SavePoints(int points)
     {
         currentCurrency.CurrentPoints += points;
+        Debug.Log("Saved points: " + points);
     }
     
     private async void SpawnPoint()
@@ -135,10 +133,12 @@ public class GameplayManager : MonoBehaviour
 
             pointGo.Component.SetUp(() => ReturnToPool(pointGo));
 
-            Vector2 spawnPoint = new(Random.Range(0.3f, 0.6f), Random.Range(0.5f, 1f));
+            Vector2 spawnPoint = new Vector2(
+                Random.Range(0.3f, 0.6f),
+                Random.Range(0.5f, 1f)
+            );
 
             spawnPoint = _mainCam.ViewportToWorldPoint(spawnPoint);
-
             pointGo.Obj.transform.position = spawnPoint;
         }
         catch (Exception e)
