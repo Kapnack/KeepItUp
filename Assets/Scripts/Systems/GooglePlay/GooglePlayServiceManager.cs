@@ -23,25 +23,26 @@ namespace Systems.GooglePlay
             eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
 #endif
         }
-        
+
         private void Start()
         {
-            TryLogin();
+#if UNITY_ANDROID && !UNITY_EDITOR
+            PlayGamesPlatform.DebugLogEnabled = true;
+            PlayGamesPlatform.Instance.Authenticate(TryLogin);
+#endif
         }
 
-        private void TryLogin()
+        internal void TryLogin(SignInStatus status)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
-            PlayGamesPlatform.Activate();
-
-            PlayGamesPlatform.Instance.Authenticate((status) =>
-            {
                 if (status == SignInStatus.Success)
+                {
                     Debug.Log("Google Play Games: Login Successful");
+                    
+                    Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
+                    Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
+                }
                 else
-                    Debug.LogError("Google Play Games: Login Failed - " + status);
-            });
-#endif
+                    Debug.Log("Google Play Games: Login Failed - " + status);
         }
 
         public void AddPointsToRanking(long points)
