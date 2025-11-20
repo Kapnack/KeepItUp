@@ -11,4 +11,4 @@ ScriptedImporter:
   generateWrapperCode: 1
   wrapperCodePath: 
   wrapperClassName: CustomInputSystem
-  wrapperCodeNamespace: InputSystem
+  wrapperCodeNamespace: CustomInput

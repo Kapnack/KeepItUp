@@ -1,9 +1,10 @@
 using System.Collections;
-using InputSystem;
+using CustomInput;
 using Systems.EventSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.LowLevel;
 
 public class PlayerController : MonoBehaviour, IPlayerController
 {
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     {
         _inputSystem = new CustomInputSystem();
 
+
 #if UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
         TouchSimulation.Enable();
 #endif
@@ -45,6 +47,16 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void OnEnable()
     {
         _inputSystem.Player.Enable();
+
+        var gyroscope = UnityEngine.InputSystem.Gyroscope.current;
+
+
+        if (gyroscope != null)
+        {
+            Debug.Log($"GYROSCOPE: {gyroscope}");
+            InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
+        }
+
         _inputSystem.Player.PrimaryContact.started += OnPressStarted;
         _inputSystem.Player.PrimaryContact.canceled += OnPressEnded;
         _inputSystem.Player.Pause.started += OnPauseStarted;
@@ -53,6 +65,17 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void OnDisable()
     {
         _inputSystem.Player.Disable();
+
+        var gyroscope = UnityEngine.InputSystem.Gyroscope.current;
+
+
+        if (gyroscope != null)
+        {
+            Debug.Log($"GYROSCOPE: {gyroscope}");
+            gyroscope.samplingFrequency = 16;
+            InputSystem.DisableDevice(UnityEngine.InputSystem.Gyroscope.current);
+        }
+
         _inputSystem.Player.PrimaryContact.started -= OnPressStarted;
         _inputSystem.Player.PrimaryContact.canceled -= OnPressEnded;
         _inputSystem.Player.Pause.started -= OnPauseStarted;
@@ -61,7 +84,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void Update()
     {
 #if UNITY_ANDROID
-        float tilt = Mathf.Clamp(_inputSystem.Player.Tilt.ReadValue<Vector2>().x * 3f, -1, 1f);
+        float tilt = Mathf.Clamp(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.ReadValue().x * 3f, -1, 1f);
         _eventSystem?.Get<Tilting>()?.Invoke(tilt);
         Debug.Log("tilt: " + _inputSystem.Player.Tilt.ReadValue<Vector2>());
 #endif

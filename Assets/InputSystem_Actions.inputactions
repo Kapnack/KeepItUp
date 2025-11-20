@@ -35,12 +35,12 @@
                 },
                 {
                     "name": "Tilt",
-                    "type": "PassThrough",
+                    "type": "Value",
                     "id": "9f6597a2-275f-4b0c-b14e-0252171ae4f0",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -105,7 +105,7 @@
                     "path": "<Sensor>/{Tilt}",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Touch;XR;Joystick;Keyboard&Mouse;Gamepad",
+                    "groups": "",
                     "action": "Tilt",
                     "isComposite": false,
                     "isPartOfComposite": false

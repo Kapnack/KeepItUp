@@ -5,6 +5,6 @@ namespace ScriptableObjects
 {
     public class Currency : ScriptableObject
     {
-       [field: SerializeField] public int CurrentPoints { get; set; }
+       [field: NonSerialized] public int CurrentPoints { get; set; }
     }
 }

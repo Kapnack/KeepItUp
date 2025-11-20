@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID || UNITY_EDITOR
+﻿#if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using Systems.EventSystem;
@@ -29,7 +29,8 @@ namespace Systems.GooglePlay
 
         internal void TryLogin(SignInStatus status)
         {
-                if (status == SignInStatus.Success)
+#if UNITY_ANDROID
+            if (status == SignInStatus.Success)
                 {
                     Debug.Log("Google Play Games: Login Successful");
                     
@@ -38,6 +39,7 @@ namespace Systems.GooglePlay
                 }
                 else
                     Debug.Log("Google Play Games: Login Failed - " + status);
+# endif
         }
 
         public void AddPointsToRanking(long points)

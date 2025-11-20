@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace InputSystem
+namespace CustomInput
 {
     /// <summary>
     /// Provides programmatic access to <see cref="InputActionAsset" />, <see cref="InputActionMap" />, <see cref="InputAction" /> and <see cref="InputControlScheme" /> instances defined in asset "Assets/InputSystem_Actions.inputactions".
@@ -123,12 +123,12 @@ namespace InputSystem
                 },
                 {
                     ""name"": ""Tilt"",
-                    ""type"": ""PassThrough"",
+                    ""type"": ""Value"",
                     ""id"": ""9f6597a2-275f-4b0c-b14e-0252171ae4f0"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -193,7 +193,7 @@ namespace InputSystem
                     ""path"": ""<Sensor>/{Tilt}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Touch;XR;Joystick;Keyboard&Mouse;Gamepad"",
+                    ""groups"": """",
                     ""action"": ""Tilt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
