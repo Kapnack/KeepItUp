@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void Awake()
     {
         _inputSystem = new CustomInputSystem();
-
+        
 #if UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
         TouchSimulation.Enable();
 #endif

@@ -15,18 +15,13 @@ namespace Systems.GooglePlay
         private const string ScoreBoardID = "CgkI3Licy5ILEAIQAQ";
 #endif
 
-        private void Awake()
+        private void Start()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
             eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
-#endif
-        }
-
-        private void Start()
-        {
-#if UNITY_ANDROID && !UNITY_EDITOR
+            
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Instance.Authenticate(TryLogin);
 #endif
