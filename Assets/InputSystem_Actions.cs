@@ -120,6 +120,15 @@ namespace InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Tilt"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""9f6597a2-275f-4b0c-b14e-0252171ae4f0"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -173,8 +182,19 @@ namespace InputSystem
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb7db773-a360-4b12-b164-d5811ce1fe47"",
+                    ""path"": ""<Sensor>/{Tilt}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Touch;XR;Joystick;Keyboard&Mouse;Gamepad"",
+                    ""action"": ""Tilt"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -765,6 +785,7 @@ namespace InputSystem
             m_Player_PrimaryContact = m_Player.FindAction("PrimaryContact", throwIfNotFound: true);
             m_Player_PrimaryPosition = m_Player.FindAction("PrimaryPosition", throwIfNotFound: true);
             m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+            m_Player_Tilt = m_Player.FindAction("Tilt", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -861,6 +882,7 @@ namespace InputSystem
         private readonly InputAction m_Player_PrimaryContact;
         private readonly InputAction m_Player_PrimaryPosition;
         private readonly InputAction m_Player_Pause;
+        private readonly InputAction m_Player_Tilt;
         /// <summary>
         /// Provides access to input actions defined in input action map "Player".
         /// </summary>
@@ -884,6 +906,10 @@ namespace InputSystem
             /// Provides access to the underlying input action "Player/Pause".
             /// </summary>
             public InputAction @Pause => m_Wrapper.m_Player_Pause;
+            /// <summary>
+            /// Provides access to the underlying input action "Player/Tilt".
+            /// </summary>
+            public InputAction @Tilt => m_Wrapper.m_Player_Tilt;
             /// <summary>
             /// Provides access to the underlying input action map instance.
             /// </summary>
@@ -919,6 +945,9 @@ namespace InputSystem
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Tilt.started += instance.OnTilt;
+                @Tilt.performed += instance.OnTilt;
+                @Tilt.canceled += instance.OnTilt;
             }
 
             /// <summary>
@@ -939,6 +968,9 @@ namespace InputSystem
                 @Pause.started -= instance.OnPause;
                 @Pause.performed -= instance.OnPause;
                 @Pause.canceled -= instance.OnPause;
+                @Tilt.started -= instance.OnTilt;
+                @Tilt.performed -= instance.OnTilt;
+                @Tilt.canceled -= instance.OnTilt;
             }
 
             /// <summary>
@@ -1260,6 +1292,13 @@ namespace InputSystem
             /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
             /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
             void OnPause(InputAction.CallbackContext context);
+            /// <summary>
+            /// Method invoked when associated input action "Tilt" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+            /// </summary>
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+            /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+            void OnTilt(InputAction.CallbackContext context);
         }
         /// <summary>
         /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

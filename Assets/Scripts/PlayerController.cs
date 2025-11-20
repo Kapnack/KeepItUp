@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
     public event Tilting OnTilting;
 
     private CentralizedEventSystem _eventSystem;
-    
+
     [SerializeField] private float swipeResistance = 100;
     [SerializeField] private float waitingTillSwipe = 1.5f;
 
@@ -26,23 +26,22 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void Awake()
     {
         _inputSystem = new CustomInputSystem();
-        
-#if UNITY_EDITOR && UNITY_ANDROID || UNITY_IOS
+
+#if UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
         TouchSimulation.Enable();
 #endif
     }
 
-    private IEnumerator Start()
+    private void Start()
     {
-        while (!ServiceProvider.TryGetService(out _eventSystem))
-            yield return null;
-        
-        _eventSystem?.Register(OnSwipePerformed);
-        _eventSystem?.Register(OnHolding);
-        _eventSystem?.Register(OnStopHolding);
-        _eventSystem?.Register(OnTilting);
+        _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
+
+        _eventSystem.Register(OnSwipePerformed);
+        _eventSystem.Register(OnHolding);
+        _eventSystem.Register(OnStopHolding);
+        _eventSystem.Register(OnTilting);
     }
-    
+
     private void OnEnable()
     {
         _inputSystem.Player.Enable();
@@ -62,14 +61,11 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void Update()
     {
 #if UNITY_ANDROID
-        if (Accelerometer.current != null)
-        {
-            Vector3 accel = Accelerometer.current.acceleration.ReadValue();
-            float tilt = Mathf.Clamp(accel.x * 3f, -1, 1f);
-            _eventSystem?.Get<Tilting>()?.Invoke(tilt);
-        }
+        float tilt = Mathf.Clamp(_inputSystem.Player.Tilt.ReadValue<Vector2>().x * 3f, -1, 1f);
+        _eventSystem?.Get<Tilting>()?.Invoke(tilt);
+        Debug.Log("tilt: " + _inputSystem.Player.Tilt.ReadValue<Vector2>());
 #endif
-        
+
         if (!_isHolding)
             return;
 
@@ -80,7 +76,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
         _updatePosTime = Time.time + waitingTillSwipe;
     }
 
-    public Vector2 GetInputPos() => 
+    public Vector2 GetInputPos() =>
         _inputSystem.Player.PrimaryPosition.ReadValue<Vector2>();
 
 
@@ -119,8 +115,11 @@ public class PlayerController : MonoBehaviour, IPlayerController
 }
 
 public delegate void Tilting(float tiltDir);
+
 public delegate void Swipe(Vector2 direction);
+
 public delegate void Holding();
+
 public delegate void StopHolding();
 
 public interface IPlayerController

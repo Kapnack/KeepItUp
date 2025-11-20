@@ -101,7 +101,10 @@ public class GameplayManager : MonoBehaviour
         _playerDied = viewportPos.y < 0f;
 
         if (_playerDied)
+        {
+            SavePoints(_currentPoints);
             _eventSystem?.Get<LoadGameOver>()?.Invoke();
+        }
     }
 
     private void OnDestroy()
