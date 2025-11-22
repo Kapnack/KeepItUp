@@ -20,6 +20,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d79173fcf3c23342a4f910c1ebbfe12
+    m_Address: Assets/Prefabs/Platform.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2b44ec36efc2114b816cd0d6f8170fc
+    m_Address: Assets/Prefabs/DificultySelector.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7ec8fb16eee16ad4e828efdd1ec366c6, type: 2}
   m_SchemaSet:

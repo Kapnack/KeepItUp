@@ -23,8 +23,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private ShopVariables shopVariables;
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
     private GameObject _shopMenuGo;
+    private AsyncOperationHandle<GameObject> _shopMenuAsyncHandle;
     [SerializeField] private GameObject pluginTest;
     private CentralizedEventSystem _eventSystem;
+
     private void Awake()
     {
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
@@ -46,28 +48,32 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-       ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
+        ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
     }
-    
+
     private void OnDisable()
     {
-        Addressables.ReleaseInstance(_shopMenuGo);
+        if (_shopMenuGo != null)
+            Destroy(_shopMenuGo);
+
+        if (_shopMenuAsyncHandle.IsDone && _shopMenuAsyncHandle.Result != null)
+            Addressables.ReleaseInstance(_shopMenuAsyncHandle);
     }
 
     private IEnumerator CreateShopMenu()
     {
-        AsyncOperationHandle<GameObject> operation =
+        _shopMenuAsyncHandle =
             Addressables.LoadAssetAsync<GameObject>(shopMenu);
 
-        yield return operation;
+        yield return _shopMenuAsyncHandle;
 
-        if (operation.Status != AsyncOperationStatus.Succeeded)
+        if (_shopMenuAsyncHandle.Status != AsyncOperationStatus.Succeeded)
         {
             Debug.LogError("Failed to load player prefab.");
             yield break;
         }
 
-        _shopMenuGo = Instantiate(operation.Result);
+        _shopMenuGo = Instantiate(_shopMenuAsyncHandle.Result);
 
         _shopMenuGo.GetComponent<ShopManager>().ShopVariables = shopVariables;
         _shopMenuGo.GetComponent<ShopManager>().playerCurrentSkin = playerCurrentSkin;

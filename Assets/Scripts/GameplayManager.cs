@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Platform;
 using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
@@ -24,10 +25,14 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private SpriteAtlas ballsSpriteAtlas;
     [SerializeField] private PlayerCurrentSkin skinUse;
     [SerializeField] private AssetReference prefab;
+    [SerializeField] private AssetReference difficultyHUDPrefab;
+    [SerializeField] private AssetReference platformPrefab;
     [SerializeField] private TMP_Text scoreText;
     private string _scoreTextFormat;
     private Transform _playerPos;
     private GameObject _playerGo;
+    private GameObject _difficultyHUDGo;
+    private GameObject _platformGo;
 
     [SerializeField] private List<GameObject> pointsObject;
     private Pool<IPointsSetUp> _pool;
@@ -39,7 +44,9 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private int minPointsRequired = 20;
     private int _currentPoints;
 
-    private AsyncOperationHandle<GameObject> _loadHandle;
+    private AsyncOperationHandle<GameObject> _difficultySelectorHandle;
+    private AsyncOperationHandle<GameObject> _playerAsyncHandle;
+    private AsyncOperationHandle<GameObject> _platformAsyncHandle;
 
     private void Awake()
     {
@@ -54,21 +61,69 @@ public class GameplayManager : MonoBehaviour
 
         _eventSystem.AddListener<AddPoint>(OnAddPoints);
 
-        StartCoroutine(CreatePlayer());
+        StartCoroutine(DifficultyHUD());
     }
 
-    private IEnumerator CreatePlayer()
+    private IEnumerator DifficultyHUD()
     {
-        _loadHandle = Addressables.LoadAssetAsync<GameObject>(prefab);
-        yield return _loadHandle;
+        _difficultySelectorHandle = Addressables.LoadAssetAsync<GameObject>(difficultyHUDPrefab);
+        yield return _difficultySelectorHandle;
 
-        if (_loadHandle.Status != AsyncOperationStatus.Succeeded)
+        if (_difficultySelectorHandle.Status != AsyncOperationStatus.Succeeded)
         {
             Debug.LogError("Failed to load player prefab.");
             yield break;
         }
 
-        _playerGo = Instantiate(_loadHandle.Result);
+        _difficultyHUDGo = Instantiate(_difficultySelectorHandle.Result);
+
+        _difficultyHUDGo.GetComponent<DifficultyManager>().Callback += StartGameplay;
+
+        SceneManager.MoveGameObjectToScene(_difficultyHUDGo, gameObject.scene);
+
+        _difficultyHUDGo.transform.position = Vector3.zero;
+    }
+
+    private void StartGameplay(PlatformSettings difficultyManager)
+    {
+        StartCoroutine(GameplayStarting(difficultyManager));
+    }
+
+    private IEnumerator GameplayStarting(PlatformSettings difficultyManager)
+    {
+        Time.timeScale = 0.0f;
+
+        Coroutine routine = StartCoroutine(CreatePlatform(difficultyManager));
+
+        yield return routine;
+
+        routine = StartCoroutine(CreatePlayer());
+
+        yield return routine;
+
+        Destroy(_difficultyHUDGo);
+        Addressables.ReleaseInstance(_difficultySelectorHandle);
+
+        Time.timeScale = 1.0f;
+
+        ITimer timer = ServiceProvider.GetService<ITimer>();
+
+        timer.SetUpTimer(gameTime);
+        timer.TimeIsUp += OnTimeEnded;
+    }
+
+    private IEnumerator CreatePlayer()
+    {
+        _playerAsyncHandle = Addressables.LoadAssetAsync<GameObject>(prefab);
+        yield return _playerAsyncHandle;
+
+        if (_playerAsyncHandle.Status != AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError("Failed to load player prefab.");
+            yield break;
+        }
+
+        _playerGo = Instantiate(_playerAsyncHandle.Result);
 
         SceneManager.MoveGameObjectToScene(_playerGo, gameObject.scene);
 
@@ -83,26 +138,45 @@ public class GameplayManager : MonoBehaviour
         Destroy(creator);
     }
 
+    private IEnumerator CreatePlatform(PlatformSettings difficultyManager)
+    {
+        _platformAsyncHandle = Addressables.LoadAssetAsync<GameObject>(platformPrefab);
+        yield return _platformAsyncHandle;
+
+        if (_platformAsyncHandle.Status != AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError("Failed to load player prefab.");
+            yield break;
+        }
+
+        _platformGo = Instantiate(_platformAsyncHandle.Result);
+
+        PlatformController platformController = _platformGo.GetComponent<PlatformController>();
+
+        platformController.PlatformSettings = difficultyManager;
+        platformController.SetUp();
+
+        SceneManager.MoveGameObjectToScene(_platformGo, gameObject.scene);
+
+        _platformGo.transform.position = new Vector3(0.0f, -3.0f, 0.0f);
+    }
+
     private void Start()
     {
-        ITimer timer = ServiceProvider.GetService<ITimer>();
-
-        timer.SetUpTimer(gameTime);
-        timer.TimeIsUp += OnTimeEnded;
-
         SpawnPoint();
     }
 
     private void Update()
     {
-        if (!_playerPos) return;
+        if (!_playerPos)
+            return;
 
         Vector3 viewportPos = _mainCam.WorldToViewportPoint(_playerPos.position);
         _playerDied = viewportPos.y < 0f;
 
-        if (!_playerDied) 
+        if (!_playerDied)
             return;
-        
+
         SavePoints(_currentPoints);
         _eventSystem?.Get<LoadGameOver>()?.Invoke();
     }
@@ -112,8 +186,21 @@ public class GameplayManager : MonoBehaviour
         if (_playerGo != null)
             Destroy(_playerGo);
 
-        if (_loadHandle.IsValid())
-            Addressables.Release(_loadHandle);
+        if (_platformGo != null)
+            Destroy(_platformGo);
+
+        if (_playerAsyncHandle.IsDone && _playerAsyncHandle.Result != null)
+        {
+            Addressables.ReleaseInstance(_playerAsyncHandle.Result);
+            _playerAsyncHandle = default; // optional, clears the handle
+        }
+
+
+        if (_platformAsyncHandle.IsDone && _platformAsyncHandle.Result != null)
+        {
+            Addressables.ReleaseInstance(_platformAsyncHandle.Result);
+            _platformAsyncHandle = default;
+        }
     }
 
     private void OnAddPoints(int points)

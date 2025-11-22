@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Platform.States;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Platform
 {
@@ -8,16 +10,13 @@ namespace Platform
     {
         private readonly List<IPlatformState> _activeStates = new();
 
-        private float _maxAngleRotation = 0;
-        private float _stateSpeed = 1;
-        private Vector2 _minSize;
-        private Vector2 _maxSize;
-        
-        private void Awake()
+        [NonSerialized] public PlatformSettings PlatformSettings;
+
+        public void SetUp()
         {
-            AddState(new RotatePlatform(_maxAngleRotation, _stateSpeed));
-            AddState(new ResizePlatform(new Vector2(3f, 1f), new Vector3(5f, 1f), _stateSpeed));
-            AddState(new MovePlatform(_stateSpeed));
+            AddState(new RotatePlatform(PlatformSettings.MaxAngleRotation, PlatformSettings.StateSpeed));
+            AddState(new ResizePlatform(new Vector2(3f, 1f), new Vector3(5f, 1f), PlatformSettings.StateSpeed));
+            AddState(new MovePlatform(PlatformSettings.StateSpeed));
         }
 
         private void ChangeRandomState()
@@ -42,9 +41,9 @@ namespace Platform
 
                 newState = randomIndex switch
                 {
-                    0 => new RotatePlatform(_maxAngleRotation, _stateSpeed),
-                    1 => new ResizePlatform(new Vector2(3f, 1f), new Vector3(5f, 1f), _stateSpeed),
-                    2 => new MovePlatform(_stateSpeed),
+                    0 => new RotatePlatform(PlatformSettings.MaxAngleRotation, PlatformSettings.StateSpeed),
+                    1 => new ResizePlatform(new Vector2(3f, 1f), new Vector3(5f, 1f), PlatformSettings.StateSpeed),
+                    2 => new MovePlatform(PlatformSettings.StateSpeed),
                     _ => null
                 };
             }
