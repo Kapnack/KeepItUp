@@ -46,11 +46,6 @@ public class MainMenuManager : MonoBehaviour
         StartCoroutine(CreateShopMenu());
     }
 
-    private void Start()
-    {
-        ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
-    }
-
     private void OnDisable()
     {
         if (_shopMenuGo != null)

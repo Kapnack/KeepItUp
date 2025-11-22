@@ -47,6 +47,7 @@ namespace Systems.GooglePlay
                 case SignInStatus.Success:
                     Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
                     Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
+                    ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
                     break;
 
                 case SignInStatus.Canceled:
