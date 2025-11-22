@@ -34,10 +34,10 @@ dependencies {
     androidTestImplementation libs.espresso.core
 }
 
-tasks.register('buildAndCopy', Copy)
+tasks.register('buildAndCopy',Copy)
         {
             dependsOn assemble
-            from("${projectDir}/outputs/aar")
-            into('../Assets/Plugins/Android')
+            from("build/outputs/aar")
             include(project.name + '-release.aar')
+            into("build")
         }
