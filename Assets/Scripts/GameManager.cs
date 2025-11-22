@@ -1,10 +1,13 @@
 using System;
+using System.Collections;
 using System.Threading.Tasks;
 using SceneLoader;
 using Systems.EventSystem;
 using Systems.GooglePlay;
 using Systems.SceneLoader;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public delegate void LoadMainMenu();
 
@@ -20,7 +23,15 @@ public class GameManager : MonoBehaviour
 
     private ISceneLoader _sceneLoader;
 
-    [SerializeField] private SceneRef mainMenuScene;
+    [Header("Splash Canvas")] [SerializeField]
+    private AssetReference splashScreenPrefab;
+
+    private AsyncOperationHandle<GameObject> _splashScreenAsyncHandle;
+    private GameObject _splashScreenGo;
+
+    [Header("Scene References")] [SerializeField]
+    private SceneRef mainMenuScene;
+
     [SerializeField] private SceneRef gameplayScene;
     [SerializeField] private SceneRef gameOverScene;
     [SerializeField] private SceneRef winScene;
@@ -35,10 +46,29 @@ public class GameManager : MonoBehaviour
         ServiceProvider.SetService(_eventSystem);
 
         _sceneLoader = new SceneLoader.SceneLoader(new SceneRef(gameObject.scene));
+
+        StartCoroutine(SplashScreenCoroutine());
     }
 
-    private void Start()
+    private IEnumerator SplashScreenCoroutine()
     {
+        _splashScreenAsyncHandle = Addressables.LoadAssetAsync<GameObject>(splashScreenPrefab);
+
+        yield return _splashScreenAsyncHandle;
+
+        _splashScreenGo = Instantiate(_splashScreenAsyncHandle.Result, gameObject.transform, true);
+
+        _splashScreenGo.GetComponent<SplashScreen>().callback = DeleteSplashScreen;
+    }
+
+    private void DeleteSplashScreen()
+    {
+        if (_splashScreenGo)
+            Destroy(_splashScreenGo);
+
+        if (_splashScreenAsyncHandle.IsDone && _splashScreenAsyncHandle.Result)
+            Addressables.ReleaseInstance(_splashScreenAsyncHandle);
+
         LoadMainMenu();
     }
 

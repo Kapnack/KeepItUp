@@ -224,9 +224,10 @@ public class GameplayManager : MonoBehaviour
 
             pointGo.Component.SetUp(() => ReturnToPool(pointGo));
 
-            Vector2 spawnPoint = new Vector2(
+            Vector2 spawnPoint = new
+            (
                 Random.Range(0.3f, 0.6f),
-                Random.Range(0.5f, 1f)
+                Random.Range(0.5f, 0.7f)
             );
 
             spawnPoint = _mainCam.ViewportToWorldPoint(spawnPoint);

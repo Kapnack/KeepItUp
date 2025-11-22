@@ -2743,6 +2743,12 @@ MonoBehaviour:
   shopVariables: {fileID: 11400000, guid: 83b457f955d997b4795b2c86e85d37a3, type: 2}
   playerCurrentSkin: {fileID: 11400000, guid: b4a2675e4659ebf449fec6179ce7d771, type: 2}
   pluginTest: {fileID: 145189480}
+  creditsPrefab:
+    m_AssetGUID: 7b9a84326fb8c25409e473920516b48c
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

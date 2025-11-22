@@ -20,6 +20,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 71e9b04e36f0b2d4485eac572bb54e71
+    m_Address: Assets/Prefabs/SplashScreen.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b9a84326fb8c25409e473920516b48c
+    m_Address: Assets/Prefabs/Credits.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7ec8fb16eee16ad4e828efdd1ec366c6, type: 2}
   m_SchemaSet:

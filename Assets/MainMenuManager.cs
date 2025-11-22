@@ -22,9 +22,17 @@ public class MainMenuManager : MonoBehaviour
     [Header("Shop Menu")] [SerializeField] private AssetReference shopMenu;
     [SerializeField] private ShopVariables shopVariables;
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
-    private GameObject _shopMenuGo;
+
     private AsyncOperationHandle<GameObject> _shopMenuAsyncHandle;
+    private GameObject _shopMenuGo;
+
+
     [SerializeField] private GameObject pluginTest;
+
+    [Header("Credits")] [SerializeField] private AssetReference creditsPrefab;
+    private AsyncOperationHandle<GameObject> _creditsAsyncHandle;
+    private GameObject _creditsGo;
+
     private CentralizedEventSystem _eventSystem;
 
     private void Awake()
@@ -39,11 +47,12 @@ public class MainMenuManager : MonoBehaviour
         achievementsButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowAchievements);
         leaderboardButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowRanking);
 #endif
-        creditsButton.onClick.AddListener(() => _eventSystem.Get<LoadGameplayScene>()?.Invoke());
+        creditsButton.onClick.AddListener(OpenCredits);
         logsButton.onClick.AddListener(OpenLogs);
         exitButton.onClick.AddListener(ExitGame);
 
         StartCoroutine(CreateShopMenu());
+        StartCoroutine(CreateCredits());
     }
 
     private void OnDisable()
@@ -51,8 +60,14 @@ public class MainMenuManager : MonoBehaviour
         if (_shopMenuGo != null)
             Destroy(_shopMenuGo);
 
+        if (_creditsGo != null)
+            Destroy(_creditsGo);
+
         if (_shopMenuAsyncHandle.IsDone && _shopMenuAsyncHandle.Result != null)
             Addressables.ReleaseInstance(_shopMenuAsyncHandle);
+
+        if (_creditsAsyncHandle.IsDone && _creditsAsyncHandle.Result != null)
+            Addressables.ReleaseInstance(_creditsAsyncHandle);
     }
 
     private IEnumerator CreateShopMenu()
@@ -79,10 +94,36 @@ public class MainMenuManager : MonoBehaviour
         _shopMenuGo.transform.position = Vector3.zero;
     }
 
+    private IEnumerator CreateCredits()
+    {
+        _creditsAsyncHandle =
+            Addressables.LoadAssetAsync<GameObject>(creditsPrefab);
+
+        yield return _creditsAsyncHandle;
+
+        if (_creditsAsyncHandle.Status != AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError("Failed to load player prefab.");
+            yield break;
+        }
+
+        _creditsGo = Instantiate(_creditsAsyncHandle.Result);
+        _creditsGo.SetActive(false);
+
+        SceneManager.MoveGameObjectToScene(_creditsGo, gameObject.scene);
+
+        _creditsGo.transform.position = Vector3.zero;
+    }
+
     private void OpenShopMenu()
     {
         if (_shopMenuGo != null)
             _shopMenuGo.SetActive(true);
+    }
+
+    private void OpenCredits()
+    {
+        _creditsGo.SetActive(true);
     }
 
     private void OpenLogs()

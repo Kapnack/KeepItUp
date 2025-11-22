@@ -242,6 +242,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5180c52ecd55ae46bdf587e7abc7f40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  splashScreenPrefab:
+    m_AssetGUID: 71e9b04e36f0b2d4485eac572bb54e71
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
   mainMenuScene:
     sceneAsset: {fileID: 102900000, guid: 8d98a68167fc3a54f8d43d59d2fdb695, type: 3}
     <Index>k__BackingField: 2
