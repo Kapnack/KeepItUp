@@ -40,7 +40,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         LoadMainMenu();
-        ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
     }
 
     private async void LoadMainMenu()
