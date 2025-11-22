@@ -25,7 +25,19 @@ namespace Platform.States
             Owner = owner;
         }
 
-        public virtual void Update()
+        public void Update()
+        {
+            if (!Owner)
+                return;
+
+            if (!_deactivating)
+                NormalUpdate();
+            else
+                ExitRoutine();
+            
+        }
+
+        protected virtual void NormalUpdate()
         {
             if (!Owner)
                 return;
@@ -51,16 +63,12 @@ namespace Platform.States
                     }
                 }
             }
-            else
-            {
-                ExitRoutine();
-            }
         }
 
         public virtual void Exit(Action<IPlatformState> callback)
         {
             ExitAction = callback;
-            _deactivating = false;
+            _deactivating = true;
         }
         
         protected abstract void ExitRoutine();

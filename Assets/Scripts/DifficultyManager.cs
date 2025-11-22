@@ -54,7 +54,7 @@ public class DifficultyManager : MonoBehaviour
 
     private void OnNormalDifficulty()
     {
-        _difficulty = new PlatformSettings(20.0f, 1.5f, new Vector2(2f, 1f),  new Vector2(4f, 1f));
+        _difficulty = new PlatformSettings(20.0f, 1.5f, new Vector2(2.5f, 1f),  new Vector2(4.5f, 1f));
         difficultySelected.text = "Difficulty Selected: Normal";
         
         easyButton.image.color = Color.white;
@@ -64,7 +64,7 @@ public class DifficultyManager : MonoBehaviour
 
     private void OnHardDifficulty()
     {
-        _difficulty = new PlatformSettings(60.0f, 4.0f, new Vector2(0.8f, 1f),  new Vector2(2f, 1f));
+        _difficulty = new PlatformSettings(60.0f, 2.0f, new Vector2(2f, 1f),  new Vector2(4f, 1f));
         difficultySelected.text = "Difficulty Selected: Hard";
         
         easyButton.image.color = Color.white;

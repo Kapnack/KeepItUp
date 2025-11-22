@@ -23,7 +23,7 @@ namespace Platform.States
             _targetPosition = GetNewRandomTarget();
         }
 
-        public override void Update()
+        protected override void NormalUpdate()
         {
             Owner.transform.localPosition = Vector2.MoveTowards(
                 Owner.transform.localPosition,

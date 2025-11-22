@@ -153,7 +153,7 @@ public class GameplayManager : MonoBehaviour
 
         PlatformController platformController = _platformGo.GetComponent<PlatformController>();
 
-        platformController.PlatformSettings = difficultyManager;
+        platformController.platformSettings = difficultyManager;
         platformController.SetUp();
 
         SceneManager.MoveGameObjectToScene(_platformGo, gameObject.scene);

@@ -1,13 +1,19 @@
 using Systems.EventSystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
+
+
+public delegate void IncreaseDifficultyTime();
 
 public class Timer : MonoBehaviour, ITimer
 {
     private TMP_Text _timerText;
     private string _timerFormat;
-
+    private CentralizedEventSystem _eventSystem;
+    private float _changeDifficultyTime;
     [SerializeField] private float timerTime;
+    [SerializeField] private float increaseDifficultyTimeLaps = 10.0f;
     public event TimeIsUp TimeIsUp;
 
     private float TimerTime
@@ -37,6 +43,7 @@ public class Timer : MonoBehaviour, ITimer
         _timerFormat = _timerText.text;
 
         ServiceProvider.SetService<ITimer>(this, true);
+        _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
     }
 
     private void Update()
@@ -48,6 +55,17 @@ public class Timer : MonoBehaviour, ITimer
         }
 
         TimerTime -= Time.deltaTime;
+
+        if (timerTime < _changeDifficultyTime)
+        {
+            _changeDifficultyTime = timerTime - increaseDifficultyTimeLaps;
+            _eventSystem.Get<IncreaseDifficultyTime>()?.Invoke();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _eventSystem.Unregister<IncreaseDifficultyTime>();
     }
 
     private void UpdateTimerText()
@@ -63,6 +81,7 @@ public class Timer : MonoBehaviour, ITimer
     {
         timerTime = time;
         UpdateTimerText();
+        _changeDifficultyTime = time - increaseDifficultyTimeLaps;
     }
 }
 
