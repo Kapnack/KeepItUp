@@ -934,7 +934,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Normal
+  m_text: Easy
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8934141f41429a049981472a1a3a279f, type: 2}
   m_sharedMaterial: {fileID: -8604652301014880826, guid: 8934141f41429a049981472a1a3a279f, type: 2}
@@ -2162,10 +2162,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "You have 2 minutes to colect 20 points/fruits.\n\nIf you fall of screen
-    you loose.\n\n\nControllers:\n\t* Click left half of screen: Move left. \n\t*
-    Click right half of screen: Move Right.\n\t* Swipe Up: Jump.\n\t* Tilt left or
-    right: Move Left or right"
+  m_text: "You have 2 minutes to colect 20 points/fruits. Once you colected them
+    you would have to survive until the time runs out to win.\n\nIf you fall of screen
+    you loose.\n\nControllers:\n\t* Click left half of screen: Move left. \n\t* Click
+    right half of screen: Move Right.\n\t* Swipe Up: Jump.\n\t* Tilt left or right:
+    Move Left or right"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8934141f41429a049981472a1a3a279f, type: 2}
   m_sharedMaterial: {fileID: -8604652301014880826, guid: 8934141f41429a049981472a1a3a279f, type: 2}

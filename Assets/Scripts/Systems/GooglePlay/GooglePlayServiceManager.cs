@@ -11,7 +11,6 @@ using UnityEngine;
 namespace Systems.GooglePlay
 {
     public delegate void AchievementUnlocked(string achievementId, float percentageProgress);
-
     public delegate void ScoreBoardPoints(long score);
 
     public class GooglePlayServiceManager : MonoBehaviour
@@ -20,6 +19,8 @@ namespace Systems.GooglePlay
         private const string ScoreBoardID = "CgkI3Licy5ILEAIQAQ";
 #endif
 
+        private bool _firstLoginManual = true;
+        
         private void Awake()
         {
             ServiceProvider.SetService(this);
@@ -51,7 +52,11 @@ namespace Systems.GooglePlay
                     break;
 
                 case SignInStatus.Canceled:
-                    PlayGamesPlatform.Instance.ManuallyAuthenticate(TryLogin);
+                    if (_firstLoginManual)
+                    {
+                        PlayGamesPlatform.Instance.ManuallyAuthenticate(TryLogin);
+                        _firstLoginManual = false;
+                    }
                     break;
 
                 case SignInStatus.InternalError:
