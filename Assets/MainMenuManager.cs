@@ -24,26 +24,31 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
     private GameObject _shopMenuGo;
     [SerializeField] private GameObject pluginTest;
-
+    private CentralizedEventSystem _eventSystem;
     private void Awake()
     {
-        CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
+        _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
         pluginTest.SetActive(false);
 
-        playButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
+        playButton.onClick.AddListener(() => _eventSystem.Get<LoadGameplayScene>()?.Invoke());
         shopButton.onClick.AddListener(OpenShopMenu);
 #if !UNITY_EDITOR && UNITY_ANDROID
         achievementsButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowAchievements);
         leaderboardButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowRanking);
 #endif
-        creditsButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
+        creditsButton.onClick.AddListener(() => _eventSystem.Get<LoadGameplayScene>()?.Invoke());
         logsButton.onClick.AddListener(OpenLogs);
         exitButton.onClick.AddListener(ExitGame);
 
         StartCoroutine(CreateShopMenu());
     }
 
+    private void Start()
+    {
+       ServiceProvider.GetService<GooglePlayAchievementManager>().FirstBoot();
+    }
+    
     private void OnDisable()
     {
         Addressables.ReleaseInstance(_shopMenuGo);

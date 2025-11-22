@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
+using Systems.GooglePlay;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,6 +21,8 @@ public class ShopManager : MonoBehaviour
 
     private CentralizedEventSystem _eventSystem;
 
+    private GooglePlayAchievementManager _googlePlayAchievementManager;
+    
     private ShopVariables _shopVariables;
     public ShopVariables ShopVariables
     {
@@ -37,7 +40,7 @@ public class ShopManager : MonoBehaviour
         _currentMoneyTextFormat = currentPointsText.text;
 
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
-
+        _googlePlayAchievementManager = ServiceProvider.GetService<GooglePlayAchievementManager>();
         returnButton.onClick.AddListener(OnReturn);
 
         _eventSystem.AddListener<TryBuySkin>(TryBuySkin);
@@ -71,6 +74,7 @@ public class ShopManager : MonoBehaviour
         if (ShopVariables.CurrentPoints < ShopVariables.BallsPrice)
             return;
 
+        _googlePlayAchievementManager.FirstSkin();
         ShopVariables.CurrentPoints -= ShopVariables.BallsPrice;
         currentPointsText.text = string.Format(_currentMoneyTextFormat, ShopVariables.CurrentPoints);
         skin.unlocked = true;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
+using Systems.GooglePlay;
 using Systems.Pool;
 using TMPro;
 using UnityEngine;
@@ -15,11 +16,10 @@ using Random = UnityEngine.Random;
 
 public class GameplayManager : MonoBehaviour
 {
-    [Header("Game Time")]
-    [SerializeField] private float gameTime = 60;
-    
-    [Header("Player Settings")] 
-    [SerializeField] private Currency currentCurrency;
+    [Header("Game Time")] [SerializeField] private float gameTime = 60;
+
+    [Header("Player Settings")] [SerializeField]
+    private Currency currentCurrency;
 
     [SerializeField] private SpriteAtlas ballsSpriteAtlas;
     [SerializeField] private PlayerCurrentSkin skinUse;
@@ -45,13 +45,13 @@ public class GameplayManager : MonoBehaviour
     {
         _scoreTextFormat = scoreText.text;
         scoreText.text = string.Format(_scoreTextFormat, _currentPoints, minPointsRequired);
-        
+
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
         _mainCam = Camera.main;
 
         _pool = new Pool<IPointsSetUp>(pointsObject, transform);
         _pool.InitializeAll();
-        
+
         _eventSystem.AddListener<AddPoint>(OnAddPoints);
 
         StartCoroutine(CreatePlayer());
@@ -100,18 +100,18 @@ public class GameplayManager : MonoBehaviour
         Vector3 viewportPos = _mainCam.WorldToViewportPoint(_playerPos.position);
         _playerDied = viewportPos.y < 0f;
 
-        if (_playerDied)
-        {
-            SavePoints(_currentPoints);
-            _eventSystem?.Get<LoadGameOver>()?.Invoke();
-        }
+        if (!_playerDied) 
+            return;
+        
+        SavePoints(_currentPoints);
+        _eventSystem?.Get<LoadGameOver>()?.Invoke();
     }
 
     private void OnDestroy()
     {
         if (_playerGo != null)
             Destroy(_playerGo);
-        
+
         if (_loadHandle.IsValid())
             Addressables.Release(_loadHandle);
     }
@@ -121,13 +121,14 @@ public class GameplayManager : MonoBehaviour
         _currentPoints += points;
         scoreText.text = string.Format(_scoreTextFormat, _currentPoints, minPointsRequired);
     }
-    
+
     private void SavePoints(int points)
     {
+        ServiceProvider.GetService<GooglePlayServiceManager>().AddPointsToRanking(points);
         currentCurrency.CurrentPoints += points;
         Debug.Log("Saved points: " + points);
     }
-    
+
     private async void SpawnPoint()
     {
         try

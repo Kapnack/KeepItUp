@@ -11,6 +11,7 @@ using UnityEngine;
 namespace Systems.GooglePlay
 {
     public delegate void AchievementUnlocked(string achievementId, float percentageProgress);
+
     public delegate void ScoreBoardPoints(long score);
 
     public class GooglePlayServiceManager : MonoBehaviour
@@ -29,31 +30,33 @@ namespace Systems.GooglePlay
             CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-            eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
-            eventSystem.AddListener<ScoreBoardPoints>(AddPointsToRanking);
-
+            PlayGamesPlatform.Activate();
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Instance.Authenticate(TryLogin);
+
+            eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
+            eventSystem.AddListener<ScoreBoardPoints>(AddPointsToRanking);
 #endif
         }
 
 #if UNITY_ANDROID
-        [Obsolete("Obsolete")]
         internal void TryLogin(SignInStatus status)
         {
-            if (status == SignInStatus.Success)
+            switch (status)
             {
-                PlayGamesPlatform.Activate();
-                Social.localUser.Authenticate((bool success) =>
-                {
-                    if (success) Debug.Log("Google Play Games: Login Successful");
-                });
+                case SignInStatus.Success:
+                    Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
+                    Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
+                    break;
 
-                Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
-                Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
+                case SignInStatus.Canceled:
+                    PlayGamesPlatform.Instance.ManuallyAuthenticate(TryLogin);
+                    break;
+
+                case SignInStatus.InternalError:
+                    Debug.Log("Google Play Games: Login Failed - " + status);
+                    break;
             }
-            else
-                Debug.Log("Google Play Games: Login Failed - " + status);
         }
 # endif
 

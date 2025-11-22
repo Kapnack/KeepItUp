@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour, IPlayerController
 #if UNITY_ANDROID
         if (_gyroscope != null)
         {
-            float tilt = Mathf.Clamp(_gyroscope.angularVelocity.ReadValue().z * 3f, -1, 1f);
+            float tilt = Mathf.Clamp(-_gyroscope.angularVelocity.ReadValue().z, -1, 1f);
             _eventSystem?.Get<Tilting>()?.Invoke(tilt);
             Debug.Log("tilt: " + _inputSystem.Player.Tilt.ReadValue<Vector2>());
         }
