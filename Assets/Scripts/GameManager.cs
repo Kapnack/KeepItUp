@@ -136,8 +136,8 @@ public class GameManager : MonoBehaviour
         try
         {
             await _sceneLoader.UnloadAll();
-            await Task.Delay(1000);
             await _sceneLoader.LoadSceneAsync(sceneRefs);
+            await Task.Delay(1000);
         }
         catch (Exception e)
         {
