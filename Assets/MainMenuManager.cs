@@ -26,20 +26,19 @@ public class MainMenuManager : MonoBehaviour
     private AsyncOperationHandle<GameObject> _shopMenuAsyncHandle;
     private GameObject _shopMenuGo;
 
-
-    [SerializeField] private GameObject pluginTest;
-
     [Header("Credits")] [SerializeField] private AssetReference creditsPrefab;
     private AsyncOperationHandle<GameObject> _creditsAsyncHandle;
     private GameObject _creditsGo;
+
+    [Header("Plugin")] [SerializeField] private AssetReference pluginPrefab;
+    private AsyncOperationHandle<GameObject> _pluginTestAsyncHandle;
+    private GameObject _pluginTestGo;
 
     private CentralizedEventSystem _eventSystem;
 
     private void Awake()
     {
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
-
-        pluginTest.SetActive(false);
 
         playButton.onClick.AddListener(() => _eventSystem.Get<LoadGameplayScene>()?.Invoke());
         shopButton.onClick.AddListener(OpenShopMenu);
@@ -53,6 +52,7 @@ public class MainMenuManager : MonoBehaviour
 
         StartCoroutine(CreateShopMenu());
         StartCoroutine(CreateCredits());
+        StartCoroutine(CreateLogs());
     }
 
     private void OnDisable()
@@ -63,11 +63,35 @@ public class MainMenuManager : MonoBehaviour
         if (_creditsGo != null)
             Destroy(_creditsGo);
 
-        if (_shopMenuAsyncHandle.IsDone && _shopMenuAsyncHandle.Result != null)
-            Addressables.ReleaseInstance(_shopMenuAsyncHandle);
+        if (_pluginTestGo != null)
+            Destroy(_pluginTestGo);
 
-        if (_creditsAsyncHandle.IsDone && _creditsAsyncHandle.Result != null)
-            Addressables.ReleaseInstance(_creditsAsyncHandle);
+        if (_shopMenuAsyncHandle.IsValid())
+        {
+            if (_shopMenuAsyncHandle.IsDone)
+            {
+                Addressables.ReleaseInstance(_shopMenuAsyncHandle);
+            }
+            _shopMenuAsyncHandle = default;
+        }
+
+        if (_creditsAsyncHandle.IsValid())
+        {
+            if (_creditsAsyncHandle.IsDone)
+            {
+                Addressables.ReleaseInstance(_creditsAsyncHandle);
+            }
+            _creditsAsyncHandle = default;
+        }
+
+        if (_pluginTestAsyncHandle.IsValid())
+        {
+            if (_pluginTestAsyncHandle.IsDone)
+            {
+                Addressables.ReleaseInstance(_pluginTestAsyncHandle);
+            }
+            _pluginTestAsyncHandle = default;
+        }
     }
 
     private IEnumerator CreateShopMenu()
@@ -115,6 +139,29 @@ public class MainMenuManager : MonoBehaviour
         _creditsGo.transform.position = Vector3.zero;
     }
 
+    private IEnumerator CreateLogs()
+    {
+        _pluginTestAsyncHandle =
+            Addressables.LoadAssetAsync<GameObject>(pluginPrefab);
+
+        yield return _pluginTestAsyncHandle;
+
+        if (_pluginTestAsyncHandle.Status != AsyncOperationStatus.Succeeded)
+        {
+            Debug.LogError("Failed to load player prefab.");
+            yield break;
+        }
+
+        _pluginTestGo = Instantiate(_pluginTestAsyncHandle.Result);
+        
+        _pluginTestGo.GetComponent<PluginTest>().SetUp();
+        _pluginTestGo.SetActive(false);
+
+        SceneManager.MoveGameObjectToScene(_pluginTestGo, gameObject.scene);
+
+        _pluginTestGo.transform.position = Vector3.zero;
+    }
+
     private void OpenShopMenu()
     {
         if (_shopMenuGo != null)
@@ -128,7 +175,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void OpenLogs()
     {
-        pluginTest.SetActive(true);
+        _pluginTestGo.SetActive(true);
     }
 
     private void ExitGame()

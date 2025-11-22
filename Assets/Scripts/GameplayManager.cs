@@ -189,16 +189,22 @@ public class GameplayManager : MonoBehaviour
         if (_platformGo != null)
             Destroy(_platformGo);
 
-        if (_playerAsyncHandle.IsDone && _playerAsyncHandle.Result != null)
+        if (_playerAsyncHandle.IsValid())
         {
-            Addressables.ReleaseInstance(_playerAsyncHandle.Result);
-            _playerAsyncHandle = default; // optional, clears the handle
+            if (_playerAsyncHandle.IsDone)
+            {
+                Addressables.ReleaseInstance(_playerAsyncHandle);
+            }
+           
+            _playerAsyncHandle = default;
         }
 
-
-        if (_platformAsyncHandle.IsDone && _platformAsyncHandle.Result != null)
+        if (_platformAsyncHandle.IsValid())
         {
-            Addressables.ReleaseInstance(_platformAsyncHandle.Result);
+            if (_platformAsyncHandle.IsDone)
+            {
+                Addressables.ReleaseInstance(_platformAsyncHandle);
+            }
             _platformAsyncHandle = default;
         }
     }

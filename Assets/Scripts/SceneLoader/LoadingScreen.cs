@@ -7,10 +7,6 @@ using UnityEngine.UI;
 
 namespace SceneLoader
 {
-    public delegate void OnLoadingStarted();
-
-    public delegate void OnLoadingEnding();
-
     public class LoadingScreen : MonoBehaviour
     {
         private ILoadingData _data;
@@ -22,29 +18,15 @@ namespace SceneLoader
 
         [SerializeField] private Slider slider;
 
-        private void Awake()
+        private void Start()
         {
+            _data = ServiceProvider.GetService<ILoadingData>();
+            
             slider.minValue = 0;
             slider.maxValue = 100;
-
-            StartCoroutine(GetLoadingData());
         }
 
-        private IEnumerator GetLoadingData()
-        {
-            while (!ServiceProvider.TryGetService(out _data))
-                yield return null;
-
-            CentralizedEventSystem eventSystem;
-            while (!ServiceProvider.TryGetService(out eventSystem))
-                yield return null;
-            
-            eventSystem.AddListener<OnLoadingStarted>(StartLoadingScreen);
-
-            eventSystem.AddListener<OnLoadingEnding>(EndLoadingScreen);
-        }
-
-        private void StartLoadingScreen()
+        public void StartLoadingScreen()
         {
             canvas?.gameObject.SetActive(true);
 
@@ -58,9 +40,12 @@ namespace SceneLoader
 
             while (_isLoading || !Mathf.Approximately(progress, 100))
             {
-                progress = _data.GetCurrentLoadingProgress() != 0 ? _data.GetCurrentLoadingProgress() * 100.0f : 0;
+                if (_data != null)
+                {
+                    progress = _data.GetCurrentLoadingProgress() != 0 ? _data.GetCurrentLoadingProgress() * 100.0f : 0;
 
-                slider.value = progress;
+                    slider.value = progress;
+                }
 
                 yield return null;
             }
@@ -68,7 +53,7 @@ namespace SceneLoader
             EndLoadingScreen();
         }
 
-        private void EndLoadingScreen()
+        public void EndLoadingScreen()
         {
             _isLoading = false;
             canvas?.gameObject.SetActive(false);

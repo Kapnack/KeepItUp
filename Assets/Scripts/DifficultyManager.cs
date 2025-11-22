@@ -28,7 +28,10 @@ public class DifficultyManager : MonoBehaviour
     [SerializeField] private Button normalButton;
     [SerializeField] private Button hardButton;
     [SerializeField] private Button accept;
-
+    [SerializeField] private Button rules;
+    [SerializeField] private Button closeRules;
+    [SerializeField] private GameObject rulesCanvas;
+    
     private PlatformSettings _difficulty;
     
     private void Awake()
@@ -36,7 +39,9 @@ public class DifficultyManager : MonoBehaviour
         easyButton.onClick.AddListener(OnEasyDifficulty);
         normalButton.onClick.AddListener(OnNormalDifficulty);
         hardButton.onClick.AddListener(OnHardDifficulty);
-        
+        rules.onClick.AddListener(RulesOpen);
+        closeRules.onClick.AddListener(RulesClose);
+            
         accept.onClick.AddListener(AcceptDifficulty);
 
         OnEasyDifficulty();
@@ -72,6 +77,16 @@ public class DifficultyManager : MonoBehaviour
         hardButton.image.color = Color.gray;
     }
 
+    private void RulesOpen()
+    {
+        rulesCanvas.SetActive(true);
+    }
+    
+    private void RulesClose()
+    {
+        rulesCanvas.SetActive(false);
+    }
+    
     private void AcceptDifficulty()
     {
         Callback?.Invoke(_difficulty);

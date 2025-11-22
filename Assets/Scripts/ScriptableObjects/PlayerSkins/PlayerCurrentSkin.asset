@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82ab3379de0b1ab4481eb7ff5ec7a235, type: 3}
   m_Name: PlayerCurrentSkin
   m_EditorClassIdentifier: 
-  currentSkin: {fileID: 11400000, guid: 5a64f2382df9fc54994873d220cf7570, type: 2}
+  currentSkin: {fileID: 11400000, guid: ffbc7b3b79741c14a9d12d5aaa832f18, type: 2}

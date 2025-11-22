@@ -11,9 +11,13 @@ public class PluginTest : MonoBehaviour
     [SerializeField] private Button returnButton;
     private PluginManager _pluginManager;
 
+#if UNITY_ANDROID && !UNITY_EDITOR
     private const string DefaultText = "No logs";
+#else
+    private const string DefaultText = "LOGS are not available for this version of the game";
+#endif
 
-    private void Start()
+    public void SetUp()
     {
         _pluginManager = ServiceProvider.GetService<PluginManager>();
 
@@ -22,11 +26,9 @@ public class PluginTest : MonoBehaviour
         clearButton.onClick.AddListener(OnClear);
         returnButton.onClick.AddListener(ReturnButton);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
         label.text = DefaultText;
-#else
-        label.text += "LOGS are not available for this version of the game";
-#endif
+
+        OnUpdateLogs();
     }
 
     private void OnClear()

@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c1ee3ae4ed7df2e4d8199465099edb2b
+    m_Address: Assets/Prefabs/PluginTest.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 7ec8fb16eee16ad4e828efdd1ec366c6, type: 2}
   m_SchemaSet:

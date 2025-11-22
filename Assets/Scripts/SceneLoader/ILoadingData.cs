@@ -1,4 +1,4 @@
-﻿namespace Systems.SceneLoader
+﻿namespace SceneLoader
 {
     public interface ILoadingData
     {

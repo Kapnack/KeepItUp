@@ -4,21 +4,18 @@ using UnityEngine;
 
 public class SplashScreen : MonoBehaviour
 {
-    [SerializeField] private GameObject Logo;
-    [SerializeField] private float duracion = 5f;
-    [SerializeField] private float escalaMax = 1.2f;
-    [SerializeField] private float escalaMin = 0.8f;
+    [SerializeField] private GameObject logo;
+    [SerializeField] private float duration = 5f;
+    [SerializeField] private float maxScale = 1.2f;
+    [SerializeField] private float minScale = 0.8f;
 
-    [NonSerialized] public Action callback;
+    [NonSerialized] public Action Callback;
 
-    private Vector3 escalaOriginal;
-
-    private MainMenuManager mainMenuManager;
+    private Vector3 _originalLogoScale;
 
     private void Awake()
     {
-        mainMenuManager = GetComponentInParent<MainMenuManager>();
-        escalaOriginal = Logo.transform.localScale;
+        _originalLogoScale = logo.transform.localScale;
     }
 
     private void Start()
@@ -28,22 +25,23 @@ public class SplashScreen : MonoBehaviour
 
     private IEnumerator EscaladorLogo()
     {
-        float tiempo = 0f;
+        float time = 0f;
 
-        while (tiempo < duracion)
+        while (time < duration)
         {
-            tiempo += Time.deltaTime;
+            time += Time.deltaTime;
 
-            float factor = Mathf.PingPong(tiempo, duracion / 2f) / (duracion / 2f);
-            float escala = Mathf.Lerp(escalaMin, escalaMax, factor);
+            float factor = Mathf.PingPong(time, duration / 2f) / (duration / 2f);
+            float scale = Mathf.Lerp(minScale, maxScale, factor);
 
-            Logo.transform.localScale = escalaOriginal * escala;
-
+            logo.transform.localScale = _originalLogoScale * scale;
+            
             yield return null;
         }
 
-        Logo.transform.localScale = escalaOriginal;
+        logo.transform.localScale = _originalLogoScale;
+        
         gameObject.SetActive(false);
-        callback?.Invoke();
+        Callback?.Invoke();
     }
 }

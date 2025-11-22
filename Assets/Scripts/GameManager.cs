@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 {
     private readonly CentralizedEventSystem _eventSystem = new();
 
-    private ISceneLoader _sceneLoader;
+    private SceneLoader.SceneLoader _sceneLoader;
 
     [Header("Splash Canvas")] [SerializeField]
     private AssetReference splashScreenPrefab;
@@ -36,6 +36,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SceneRef gameOverScene;
     [SerializeField] private SceneRef winScene;
 
+    private LoadingScreen _loadingScreen;
+
     private void Awake()
     {
         _eventSystem.AddListener<LoadMainMenu>(LoadMainMenu);
@@ -45,11 +47,18 @@ public class GameManager : MonoBehaviour
 
         ServiceProvider.SetService(_eventSystem);
 
+        _loadingScreen = GetComponentInChildren<LoadingScreen>();
+        
         _sceneLoader = new SceneLoader.SceneLoader(new SceneRef(gameObject.scene));
-
-        StartCoroutine(SplashScreenCoroutine());
+        
+        ServiceProvider.SetService<ILoadingData>(_sceneLoader);
     }
 
+    private void Start()
+    {
+        StartCoroutine(SplashScreenCoroutine());
+    }
+    
     private IEnumerator SplashScreenCoroutine()
     {
         _splashScreenAsyncHandle = Addressables.LoadAssetAsync<GameObject>(splashScreenPrefab);
@@ -58,7 +67,7 @@ public class GameManager : MonoBehaviour
 
         _splashScreenGo = Instantiate(_splashScreenAsyncHandle.Result, gameObject.transform, true);
 
-        _splashScreenGo.GetComponent<SplashScreen>().callback = DeleteSplashScreen;
+        _splashScreenGo.GetComponent<SplashScreen>().Callback = DeleteSplashScreen;
     }
 
     private void DeleteSplashScreen()
@@ -122,11 +131,12 @@ public class GameManager : MonoBehaviour
 
     private async Task TryLoadScenes(SceneRef sceneRefs)
     {
-        _eventSystem.Get<OnLoadingStarted>()?.Invoke();
+       _loadingScreen.StartLoadingScreen();
 
         try
         {
             await _sceneLoader.UnloadAll();
+            await Task.Delay(1000);
             await _sceneLoader.LoadSceneAsync(sceneRefs);
         }
         catch (Exception e)
@@ -134,6 +144,6 @@ public class GameManager : MonoBehaviour
             Debug.LogException(e);
         }
 
-        _eventSystem.Get<OnLoadingEnding>()?.Invoke();
+        _loadingScreen.EndLoadingScreen();
     }
 }
