@@ -262,9 +262,9 @@ MonoBehaviour:
     <Index>k__BackingField: 4
     <Name>k__BackingField: GameOver
   winScene:
-    sceneAsset: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
-    <Index>k__BackingField: 3
-    <Name>k__BackingField: Gameplay
+    sceneAsset: {fileID: 102900000, guid: 34e6ceb5d227e4c468ea2928c1da8571, type: 3}
+    <Index>k__BackingField: 5
+    <Name>k__BackingField: GameWon
 --- !u!1 &1032103289
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,6 +487,10 @@ PrefabInstance:
     - target: {fileID: 4089333397166599115, guid: 9d90496760e270746b48b6981693bfc4, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4384505476223917489, guid: 9d90496760e270746b48b6981693bfc4, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4530439480241605846, guid: 9d90496760e270746b48b6981693bfc4, type: 3}
       propertyPath: m_IsActive
