@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ScriptableObjects;
 using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
@@ -14,29 +15,47 @@ public class ShopManager : MonoBehaviour
     [HideInInspector] public ShopVariables shopVariables;
     [SerializeField] private Button returnButton;
     [SerializeField] private TMP_Text currentPointsText;
-     private string _currentMoneyTextFormat;
+    [SerializeField] private List<ShopItem> itemsInShop;
+
+    private string _currentMoneyTextFormat;
 
     private CentralizedEventSystem _eventSystem;
 
     private void Awake()
     {
-        _currentMoneyTextFormat =  currentPointsText.text;
+        _currentMoneyTextFormat = currentPointsText.text;
         currentPointsText.text = string.Format(_currentMoneyTextFormat, shopVariables.CurrentPoints);
-        
+
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
         returnButton.onClick.AddListener(OnReturn);
-        
+
         _eventSystem.AddListener<TryBuySkin>(TryBuySkin);
         _eventSystem.AddListener<TryEquipSkin>(TryEquipSkin);
+        
+        playerCurrentSkin.currentSkin.equipped = true;
+        playerCurrentSkin.currentSkin.unlocked = true;
+    }
+
+    private void Start()
+    {
+        foreach (ShopItem item in itemsInShop)
+        {
+            if (item.skin != playerCurrentSkin.currentSkin) 
+                continue;
+            
+            item.UpdateWhenEquipped();
+            break;
+        }
     }
 
     private void OnDestroy()
     {
         _eventSystem.Unregister<TryBuySkin>();
         _eventSystem.Unregister<TryEquipSkin>();
+        _eventSystem.Unregister<SkinChanged>();
     }
-    
+
     private void TryBuySkin(PlayerShopSkins skin, Action callback)
     {
         if (shopVariables.CurrentPoints < shopVariables.BallsPrice)

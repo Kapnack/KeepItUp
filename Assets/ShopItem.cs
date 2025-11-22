@@ -11,9 +11,10 @@ public delegate void TryBuySkin(PlayerShopSkins skin, Action callback);
 
 public delegate void TryEquipSkin(PlayerShopSkins skin, Action callback);
 
+[Serializable]
 public class ShopItem : MonoBehaviour
 {
-    [SerializeField] private PlayerShopSkins skin;
+    public PlayerShopSkins skin;
     [SerializeField] private Image icon;
     [SerializeField] private Button button;
     [SerializeField] private TMP_Text text;
@@ -26,7 +27,7 @@ public class ShopItem : MonoBehaviour
     private const string EquipText = "Equip";
     private const string EquippedText = "Equipped";
 
-    private void Start()
+    private void Awake()
     {
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
@@ -35,17 +36,23 @@ public class ShopItem : MonoBehaviour
         button.onClick.AddListener(OnButtonClicked);
 
         icon.sprite = atlas.GetSprite(Enum.GetName(typeof(Playerskins), skin.skinName));
+    }
 
+    private void Start()
+    {
+        _eventSystem.AddListener<SkinChanged>(PlayerChangedSkin);
+        
         if (skin.unlocked)
-            UpdateWhenBought();
-        else if (skin.equipped)
-            UpdateWhenEquipped();
+        {
+            if (skin.equipped)
+                UpdateWhenEquipped();
+            else
+                UpdateWhenBought();
+        }
         else
             UpdateWhenLocked();
-
-        _eventSystem.AddListener<SkinChanged>(PlayerChangedSkin);
     }
-    
+
     private void OnButtonClicked()
     {
         if (skin.unlocked)
@@ -59,6 +66,8 @@ public class ShopItem : MonoBehaviour
         icon.color = Color.gray;
         button.image.sprite = buttonAtlas.GetSprite("Red");
         text.text = BuyText;
+        skin.unlocked = false;
+        skin.equipped = false;
     }
 
     private void UpdateWhenBought()
@@ -66,23 +75,28 @@ public class ShopItem : MonoBehaviour
         icon.color = Color.white;
         button.image.sprite = buttonAtlas.GetSprite("Green");
         text.text = EquipText;
+        skin.unlocked = true;
+        skin.equipped = false;
     }
 
-    private void UpdateWhenEquipped()
+    public void UpdateWhenEquipped()
     {
         icon.color = Color.white;
         button.image.sprite = buttonAtlas.GetSprite("Blue");
         text.text = EquippedText;
+        skin.equipped = true;
     }
 
     private void PlayerChangedSkin(PlayerShopSkins skin)
     {
-        if (!this.skin.unlocked)
-            return;
-
         if (this.skin == skin)
+        {
             UpdateWhenEquipped();
-        else
+            skin.equipped = true;
+        }
+        else if (this.skin.unlocked)
             UpdateWhenBought();
+        else
+            UpdateWhenLocked();
     }
 }

@@ -13,7 +13,7 @@ namespace ScriptableObjects.PlayerSkins
         BiSkin,
         FaceBall
     }
-    
+
     [CreateAssetMenu(fileName = "PlayerSkin", menuName = "ScriptableObjects/PlayerSkin")]
     public class PlayerShopSkins : ScriptableObject
     {
