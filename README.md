@@ -24,9 +24,10 @@ A su vez, este juego incluye un plugin programado en Java mediante Android Studi
 
 * IMAGENES:
 
-* ICONO:
+  * ICONO:
 <img width="512" height="512" alt="Icon" src="https://github.com/user-attachments/assets/26cb249a-73c7-4615-ac01-71477c4e0706" />
 
-* CAPTURAS DE PANTALLA:
+
+  * CAPTURAS DE PANTALLA:
 <img width="2562" height="1216" alt="ScreenShot_framed" src="https://github.com/user-attachments/assets/b52953e8-e7d7-4f56-af7b-4d0c6d559876" />
 <img width="2562" height="1216" alt="ScreenShot2_framed" src="https://github.com/user-attachments/assets/1b6b9c41-a8d5-4fe7-9e01-6c58f601d602" />
