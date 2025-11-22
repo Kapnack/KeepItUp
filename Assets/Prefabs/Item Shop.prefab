@@ -56,6 +56,7 @@ MonoBehaviour:
   text: {fileID: 2305097520687972268}
   atlas: {fileID: 100100200, guid: 6e3ced3565eabbe4a8a33940e3f1fe26, type: 3}
   buttonAtlas: {fileID: 100100200, guid: 7fcc718e50dd55246bf6eacd4691734c, type: 3}
+  shopVariables: {fileID: 0}
 --- !u!1 &8203348276146904395
 GameObject:
   m_ObjectHideFlags: 0

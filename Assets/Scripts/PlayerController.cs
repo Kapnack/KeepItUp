@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.LowLevel;
+using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 
 public class PlayerController : MonoBehaviour, IPlayerController
 {
@@ -24,10 +25,16 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private Vector2 _initialPos;
     private float _updatePosTime;
 
+    private Gyroscope _gyroscope;
+
     private void Awake()
     {
         _inputSystem = new CustomInputSystem();
 
+        _gyroscope = Gyroscope.current;
+
+        if (_gyroscope != null)
+            _gyroscope.samplingFrequency = 16;
 
 #if UNITY_EDITOR && (UNITY_ANDROID || UNITY_IOS)
         TouchSimulation.Enable();
@@ -48,13 +55,11 @@ public class PlayerController : MonoBehaviour, IPlayerController
     {
         _inputSystem.Player.Enable();
 
-        var gyroscope = UnityEngine.InputSystem.Gyroscope.current;
 
-
-        if (gyroscope != null)
+        if (_gyroscope != null)
         {
-            Debug.Log($"GYROSCOPE: {gyroscope}");
-            InputSystem.EnableDevice(UnityEngine.InputSystem.Gyroscope.current);
+            Debug.Log($"GYROSCOPE: {_gyroscope != null}");
+            InputSystem.EnableDevice(_gyroscope);
         }
 
         _inputSystem.Player.PrimaryContact.started += OnPressStarted;
@@ -66,14 +71,10 @@ public class PlayerController : MonoBehaviour, IPlayerController
     {
         _inputSystem.Player.Disable();
 
-        var gyroscope = UnityEngine.InputSystem.Gyroscope.current;
-
-
-        if (gyroscope != null)
+        if (_gyroscope != null)
         {
-            Debug.Log($"GYROSCOPE: {gyroscope}");
-            gyroscope.samplingFrequency = 16;
-            InputSystem.DisableDevice(UnityEngine.InputSystem.Gyroscope.current);
+            Debug.Log($"GYROSCOPE: {_gyroscope}");
+            InputSystem.DisableDevice(Gyroscope.current);
         }
 
         _inputSystem.Player.PrimaryContact.started -= OnPressStarted;
@@ -84,9 +85,12 @@ public class PlayerController : MonoBehaviour, IPlayerController
     private void Update()
     {
 #if UNITY_ANDROID
-        float tilt = Mathf.Clamp(UnityEngine.InputSystem.Gyroscope.current.angularVelocity.ReadValue().x * 3f, -1, 1f);
-        _eventSystem?.Get<Tilting>()?.Invoke(tilt);
-        Debug.Log("tilt: " + _inputSystem.Player.Tilt.ReadValue<Vector2>());
+        if (_gyroscope != null)
+        {
+            float tilt = Mathf.Clamp(_gyroscope.angularVelocity.ReadValue().z * 3f, -1, 1f);
+            _eventSystem?.Get<Tilting>()?.Invoke(tilt);
+            Debug.Log("tilt: " + _inputSystem.Player.Tilt.ReadValue<Vector2>());
+        }
 #endif
 
         if (!_isHolding)
@@ -101,7 +105,6 @@ public class PlayerController : MonoBehaviour, IPlayerController
 
     public Vector2 GetInputPos() =>
         _inputSystem.Player.PrimaryPosition.ReadValue<Vector2>();
-
 
     private void OnPressStarted(InputAction.CallbackContext context)
     {

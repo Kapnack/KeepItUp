@@ -32,6 +32,8 @@ public class PluginManager : MonoBehaviour
         }
 
         _pluginInstance = _pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
+        
+        UpdateLogs();
 #endif
     }
 
@@ -42,7 +44,6 @@ public class PluginManager : MonoBehaviour
             return;
     
         _pluginInstance.Call("SendLog", $"{type}: {logString}");
-    
 #endif
     }
 

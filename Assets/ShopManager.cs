@@ -10,8 +10,8 @@ public delegate void SkinChanged(PlayerShopSkins skinEquipped);
 
 public class ShopManager : MonoBehaviour
 {
-    [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
-    [SerializeField] private ShopVariables shopVariables;
+    [HideInInspector] public PlayerCurrentSkin playerCurrentSkin;
+    [HideInInspector] public ShopVariables shopVariables;
     [SerializeField] private Button returnButton;
     [SerializeField] private TMP_Text currentPointsText;
      private string _currentMoneyTextFormat;
@@ -26,21 +26,17 @@ public class ShopManager : MonoBehaviour
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
         returnButton.onClick.AddListener(OnReturn);
-
+        
         _eventSystem.AddListener<TryBuySkin>(TryBuySkin);
         _eventSystem.AddListener<TryEquipSkin>(TryEquipSkin);
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        if (_eventSystem == null)
-            return;
-        
         _eventSystem.Unregister<TryBuySkin>();
         _eventSystem.Unregister<TryEquipSkin>();
-        _eventSystem.Unregister<SkinChanged>();
     }
-
+    
     private void TryBuySkin(PlayerShopSkins skin, Action callback)
     {
         if (shopVariables.CurrentPoints < shopVariables.BallsPrice)

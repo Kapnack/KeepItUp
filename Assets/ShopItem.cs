@@ -45,7 +45,7 @@ public class ShopItem : MonoBehaviour
 
         _eventSystem.AddListener<SkinChanged>(PlayerChangedSkin);
     }
-
+    
     private void OnButtonClicked()
     {
         if (skin.unlocked)

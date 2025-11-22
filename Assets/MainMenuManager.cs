@@ -1,5 +1,8 @@
 using System.Collections;
+using ScriptableObjects;
+using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
+using Systems.GooglePlay;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -10,11 +13,16 @@ public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private Button playButton;
     [SerializeField] private Button shopButton;
+    [SerializeField] private Button achievementsButton;
+    [SerializeField] private Button leaderboardButton;
     [SerializeField] private Button creditsButton;
     [SerializeField] private Button logsButton;
     [SerializeField] private Button exitButton;
 
+    [Header("Shop Menu")]
     [SerializeField] private AssetReference shopMenu;
+    [SerializeField] private ShopVariables shopVariables;
+    [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
     private GameObject _shopMenuGo;
     [SerializeField] private GameObject pluginTest;
 
@@ -26,6 +34,8 @@ public class MainMenuManager : MonoBehaviour
         
         playButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
         shopButton.onClick.AddListener(OpenShopMenu);
+        achievementsButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowAchievements);
+        leaderboardButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowRanking);
         creditsButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
         logsButton.onClick.AddListener(OpenLogs);
         exitButton.onClick.AddListener(ExitGame);
@@ -52,8 +62,11 @@ public class MainMenuManager : MonoBehaviour
         }
 
         _shopMenuGo = Instantiate(operation.Result);
-        _shopMenuGo.SetActive(false);
 
+        _shopMenuGo.GetComponent<ShopManager>().shopVariables = shopVariables;
+        _shopMenuGo.GetComponent<ShopManager>().playerCurrentSkin = playerCurrentSkin;
+        _shopMenuGo.SetActive(false);
+        
         SceneManager.MoveGameObjectToScene(_shopMenuGo, gameObject.scene);
 
         _shopMenuGo.transform.position = Vector3.zero;

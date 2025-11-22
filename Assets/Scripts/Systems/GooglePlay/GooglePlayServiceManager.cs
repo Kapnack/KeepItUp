@@ -3,56 +3,78 @@ using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using Systems.EventSystem;
 #endif
+using System;
+using GooglePlayGames.BasicApi;
+using Systems.EventSystem;
 using UnityEngine;
 
 namespace Systems.GooglePlay
 {
     public delegate void AchievementUnlocked(string achievementId, float percentageProgress);
+    public delegate void ScoreBoardPoints(long score);
 
     public class GooglePlayServiceManager : MonoBehaviour
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+//#if UNITY_ANDROID && !UNITY_EDITOR
         private const string ScoreBoardID = "CgkI3Licy5ILEAIQAQ";
-#endif
+//#endif
+
+        private void Awake()
+        {
+            ServiceProvider.SetService(this);
+        }
 
         private void Start()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
             CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
+//#if UNITY_ANDROID && !UNITY_EDITOR
             eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
-            
+            eventSystem.AddListener<ScoreBoardPoints>(AddPointsToRanking);
+
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Instance.Authenticate(TryLogin);
-#endif
+//#endif
         }
 
+        [Obsolete("Obsolete")]
         internal void TryLogin(SignInStatus status)
         {
-#if UNITY_ANDROID
+//#if UNITY_ANDROID
             if (status == SignInStatus.Success)
+            {
+                PlayGamesPlatform.Activate();
+                Social.localUser.Authenticate((bool success) =>
                 {
-                    Debug.Log("Google Play Games: Login Successful");
-                    
-                    Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
-                    Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
-                }
-                else
-                    Debug.Log("Google Play Games: Login Failed - " + status);
-# endif
+                    if (success) Debug.Log("Google Play Games: Login Successful");
+                });
+
+                Debug.Log("User Name: " + PlayGamesPlatform.Instance.GetUserDisplayName());
+                Debug.Log("User ID: " + PlayGamesPlatform.Instance.GetUserId());
+            }
+            else
+                Debug.Log("Google Play Games: Login Failed - " + status);
+//# endif
         }
 
         public void AddPointsToRanking(long points)
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
+//#if UNITY_ANDROID && !UNITY_EDITOR
             if (PlayGamesPlatform.Instance.IsAuthenticated())
             {
                 PlayGamesPlatform.Instance.ReportScore(points, ScoreBoardID, (success) =>
                 {
-                    Debug.Log("ReportScore: " + success);
+                    if (success)
+                    {
+                        Debug.Log("Score reported successfully.");
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to report score.");
+                    }
                 });
             }
-#endif
+//#endif
         }
 
         public void ShowRanking()
@@ -71,7 +93,7 @@ namespace Systems.GooglePlay
 #endif
         }
 
-        private void UpdateAchievement(string achievementId, float percentageProgress)
+        public void UpdateAchievement(string achievementId, float percentageProgress)
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             if (PlayGamesPlatform.Instance.IsAuthenticated())
