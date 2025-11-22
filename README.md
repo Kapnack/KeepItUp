@@ -1,5 +1,4 @@
-                                          <img width="512" height="512" alt="Icon" src="https://github.com/user-attachments/assets/26cb249a-73c7-4615-ac01-71477c4e0706" />
-  <img width="1024" height="364" alt="MainMenu" src="https://github.com/user-attachments/assets/645e0255-41fd-455b-a72d-eafb043fb1b7" />
+ <img width="1024" height="364" alt="MainMenu" src="https://github.com/user-attachments/assets/645e0255-41fd-455b-a72d-eafb043fb1b7" />
 
 “Keep it Up” es un juego con una mecánica sencilla pero desafiante, centrado en el equilibrio y la recolección de puntos. El jugador comienza seleccionando un nivel de dificultad, el cual afecta la agresividad del movimiento, la rotación y la escala del trampolín que mantiene al personaje en juego.
 El objetivo principal es alcanzar 20 puntos antes de que transcurran 2 minutos, mientras se mantiene el equilibrio sobre el trampolín. Al conseguir los puntos, estos se envían automáticamente a la leaderboard de Android, fomentando la competencia basada en quién puede obtener la mayor cantidad de puntos dentro del tiempo límite, sin importar la dificultad seleccionada.
@@ -25,3 +24,4 @@ A su vez, este juego incluye un plugin programado en Java mediante Android Studi
 
 <img width="2562" height="1216" alt="ScreenShot_framed" src="https://github.com/user-attachments/assets/b52953e8-e7d7-4f56-af7b-4d0c6d559876" />
 <img width="2562" height="1216" alt="ScreenShot2_framed" src="https://github.com/user-attachments/assets/1b6b9c41-a8d5-4fe7-9e01-6c58f601d602" />
+<img width="512" height="512" alt="Icon" src="https://github.com/user-attachments/assets/26cb249a-73c7-4615-ac01-71477c4e0706" />
