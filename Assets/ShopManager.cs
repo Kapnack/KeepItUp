@@ -12,7 +12,6 @@ public delegate void SkinChanged(PlayerShopSkins skinEquipped);
 public class ShopManager : MonoBehaviour
 {
     [HideInInspector] public PlayerCurrentSkin playerCurrentSkin;
-    [HideInInspector] public ShopVariables shopVariables;
     [SerializeField] private Button returnButton;
     [SerializeField] private TMP_Text currentPointsText;
     [SerializeField] private List<ShopItem> itemsInShop;
@@ -21,10 +20,21 @@ public class ShopManager : MonoBehaviour
 
     private CentralizedEventSystem _eventSystem;
 
+    private ShopVariables _shopVariables;
+    public ShopVariables ShopVariables
+    {
+        get => _shopVariables;
+        set
+        {
+            _shopVariables = value;
+            
+            currentPointsText.text = string.Format(_currentMoneyTextFormat, ShopVariables.CurrentPoints);
+        }
+    }
+    
     private void Awake()
     {
         _currentMoneyTextFormat = currentPointsText.text;
-        currentPointsText.text = string.Format(_currentMoneyTextFormat, shopVariables.CurrentPoints);
 
         _eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
@@ -58,11 +68,11 @@ public class ShopManager : MonoBehaviour
 
     private void TryBuySkin(PlayerShopSkins skin, Action callback)
     {
-        if (shopVariables.CurrentPoints < shopVariables.BallsPrice)
+        if (ShopVariables.CurrentPoints < ShopVariables.BallsPrice)
             return;
 
-        shopVariables.CurrentPoints -= shopVariables.BallsPrice;
-        currentPointsText.text = string.Format(_currentMoneyTextFormat, shopVariables.CurrentPoints);
+        ShopVariables.CurrentPoints -= ShopVariables.BallsPrice;
+        currentPointsText.text = string.Format(_currentMoneyTextFormat, ShopVariables.CurrentPoints);
         skin.unlocked = true;
         callback?.Invoke();
     }

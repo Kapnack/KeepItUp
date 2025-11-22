@@ -13,5 +13,3 @@ MonoBehaviour:
   m_Name: DefaultSkin
   m_EditorClassIdentifier: 
   skinName: 0
-  unlocked: 0
-  equipped: 0

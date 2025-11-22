@@ -2,9 +2,9 @@
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using Systems.EventSystem;
+using GooglePlayGames.BasicApi;
 #endif
 using System;
-using GooglePlayGames.BasicApi;
 using Systems.EventSystem;
 using UnityEngine;
 
@@ -15,9 +15,9 @@ namespace Systems.GooglePlay
 
     public class GooglePlayServiceManager : MonoBehaviour
     {
-//#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
         private const string ScoreBoardID = "CgkI3Licy5ILEAIQAQ";
-//#endif
+#endif
 
         private void Awake()
         {
@@ -28,19 +28,19 @@ namespace Systems.GooglePlay
         {
             CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
-//#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             eventSystem.AddListener<AchievementUnlocked>(UpdateAchievement);
             eventSystem.AddListener<ScoreBoardPoints>(AddPointsToRanking);
 
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Instance.Authenticate(TryLogin);
-//#endif
+#endif
         }
 
+#if UNITY_ANDROID
         [Obsolete("Obsolete")]
         internal void TryLogin(SignInStatus status)
         {
-//#if UNITY_ANDROID
             if (status == SignInStatus.Success)
             {
                 PlayGamesPlatform.Activate();
@@ -54,12 +54,12 @@ namespace Systems.GooglePlay
             }
             else
                 Debug.Log("Google Play Games: Login Failed - " + status);
-//# endif
         }
+# endif
 
         public void AddPointsToRanking(long points)
         {
-//#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
             if (PlayGamesPlatform.Instance.IsAuthenticated())
             {
                 PlayGamesPlatform.Instance.ReportScore(points, ScoreBoardID, (success) =>
@@ -74,7 +74,7 @@ namespace Systems.GooglePlay
                     }
                 });
             }
-//#endif
+#endif
         }
 
         public void ShowRanking()

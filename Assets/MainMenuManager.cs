@@ -19,8 +19,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button logsButton;
     [SerializeField] private Button exitButton;
 
-    [Header("Shop Menu")]
-    [SerializeField] private AssetReference shopMenu;
+    [Header("Shop Menu")] [SerializeField] private AssetReference shopMenu;
     [SerializeField] private ShopVariables shopVariables;
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
     private GameObject _shopMenuGo;
@@ -31,18 +30,20 @@ public class MainMenuManager : MonoBehaviour
         CentralizedEventSystem eventSystem = ServiceProvider.GetService<CentralizedEventSystem>();
 
         pluginTest.SetActive(false);
-        
+
         playButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
         shopButton.onClick.AddListener(OpenShopMenu);
+#if !UNITY_EDITOR && UNITY_ANDROID
         achievementsButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowAchievements);
         leaderboardButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowRanking);
+#endif
         creditsButton.onClick.AddListener(() => eventSystem.Get<LoadGameplayScene>()?.Invoke());
         logsButton.onClick.AddListener(OpenLogs);
         exitButton.onClick.AddListener(ExitGame);
-        
+
         StartCoroutine(CreateShopMenu());
     }
-    
+
     private void OnDisable()
     {
         Addressables.ReleaseInstance(_shopMenuGo);
@@ -63,10 +64,10 @@ public class MainMenuManager : MonoBehaviour
 
         _shopMenuGo = Instantiate(operation.Result);
 
-        _shopMenuGo.GetComponent<ShopManager>().shopVariables = shopVariables;
+        _shopMenuGo.GetComponent<ShopManager>().ShopVariables = shopVariables;
         _shopMenuGo.GetComponent<ShopManager>().playerCurrentSkin = playerCurrentSkin;
         _shopMenuGo.SetActive(false);
-        
+
         SceneManager.MoveGameObjectToScene(_shopMenuGo, gameObject.scene);
 
         _shopMenuGo.transform.position = Vector3.zero;
@@ -82,7 +83,7 @@ public class MainMenuManager : MonoBehaviour
     {
         pluginTest.SetActive(true);
     }
-    
+
     private void ExitGame()
     {
 #if UNITY_EDITOR
