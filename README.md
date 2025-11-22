@@ -1,4 +1,4 @@
-  <img width="512" height="512" alt="Icon" src="https://github.com/user-attachments/assets/26cb249a-73c7-4615-ac01-71477c4e0706" />
+                                          <img width="512" height="512" alt="Icon" src="https://github.com/user-attachments/assets/26cb249a-73c7-4615-ac01-71477c4e0706" />
   <img width="1024" height="364" alt="MainMenu" src="https://github.com/user-attachments/assets/645e0255-41fd-455b-a72d-eafb043fb1b7" />
 
 “Keep it Up” es un juego con una mecánica sencilla pero desafiante, centrado en el equilibrio y la recolección de puntos. El jugador comienza seleccionando un nivel de dificultad, el cual afecta la agresividad del movimiento, la rotación y la escala del trampolín que mantiene al personaje en juego.
