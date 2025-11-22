@@ -1,6 +1,6 @@
  <img width="1024" height="364" alt="MainMenu" src="https://github.com/user-attachments/assets/645e0255-41fd-455b-a72d-eafb043fb1b7" />
 
-“Keep it Up” es un juego con una mecánica sencilla pero desafiante, centrado en el equilibrio y la recolección de puntos. El jugador comienza seleccionando un nivel de dificultad, el cual afecta la agresividad del movimiento, la rotación y la escala del trampolín que mantiene al personaje en juego.
+“Keep it Up” es un juego con una mecánica sencilla pero desafiante, centrado en el equilibrio y la recolección de puntos. El jugador comienza seleccionando un nivel de dificultad, el cual afecta la agresividad del movimiento, la rotación y la escala del trampolín que mantiene al personaje en juego. Realizado como entrega del segundo parcial de la materia "Desarrollo de Videojuegos para Dispositivos Móviles" del profesor Rodrigo Martin Corral Fernandez.
 El objetivo principal es alcanzar 20 puntos antes de que transcurran 2 minutos, mientras se mantiene el equilibrio sobre el trampolín. Al conseguir los puntos, estos se envían automáticamente a la leaderboard de Android, fomentando la competencia basada en quién puede obtener la mayor cantidad de puntos dentro del tiempo límite, sin importar la dificultad seleccionada.
 Al regresar al menú principal, si el jugador ha alcanzado los 20 puntos, puede acceder a la tienda para comprar y equipar diferentes skins, las cuales modifican la apariencia de la pelota del personaje y ofrecen una experiencia visual personalizada.
 A su vez el juego incluye dos logros:
