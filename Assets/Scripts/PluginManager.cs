@@ -7,7 +7,6 @@ public class PluginManager : MonoBehaviour
 #if UNITY_ANDROID && !UNITY_EDITOR
     private const string PluginClassname = "com.example.wavelogger.WaveLogger";
 
-    private AndroidJavaClass _pluginClass;
     private AndroidJavaObject _pluginInstance;
 #endif
 
@@ -16,24 +15,19 @@ public class PluginManager : MonoBehaviour
         ServiceProvider.SetService(this);
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        Application.logMessageReceived += ForwardUnityLog;
-        
-        Debug.Log("Unity - " + PluginClassname);
+    Application.logMessageReceived += ForwardUnityLog;
 
-        _pluginClass = new AndroidJavaClass(PluginClassname);
+    using (AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+    {
+        AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
 
-        if (_pluginClass == null)
+        using (var pluginClass = new AndroidJavaClass(PluginClassname))
         {
-            Debug.LogError("pluginClass is null! Check your class name or .aar setup.");
+            _pluginInstance = pluginClass.CallStatic<AndroidJavaObject>("GetInstance", activity);
         }
-        else
-        {
-            Debug.Log("pluginClass created successfully.");
-        }
+    }
 
-        _pluginInstance = _pluginClass.CallStatic<AndroidJavaObject>("GetInstance");
-        
-        UpdateLogs();
+    UpdateLogs();
 #endif
     }
 
@@ -58,7 +52,6 @@ public class PluginManager : MonoBehaviour
     public string UpdateLogs()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        Debug.Log("Unity -  UpdateLogs");
         return _pluginInstance.Call<string>("GetLogs");
 #else
         return "";
@@ -68,7 +61,11 @@ public class PluginManager : MonoBehaviour
     public void ClearLogs()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        _pluginInstance.Call("ClearLogs");
+            using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            _pluginInstance.Call("ClearLogs", activity);
+        }
 #endif
     }
 }
