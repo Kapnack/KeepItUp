@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e219db13344ec419e2dbb82e108994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testMode: 1
+  testMode: 0
 --- !u!4 &2117770332
 Transform:
   m_ObjectHideFlags: 0
