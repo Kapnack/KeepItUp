@@ -44,6 +44,8 @@ public class GameplayManager : MonoBehaviour
     [SerializeField] private int minPointsRequired = 20;
     private int _currentPoints;
 
+    private InterstitialAdExample _interstitialAd;
+    
     private AsyncOperationHandle<GameObject> _difficultySelectorHandle;
     private AsyncOperationHandle<GameObject> _playerAsyncHandle;
     private AsyncOperationHandle<GameObject> _platformAsyncHandle;
@@ -61,9 +63,11 @@ public class GameplayManager : MonoBehaviour
 
         _eventSystem.AddListener<AddPoint>(OnAddPoints);
 
+        _interstitialAd = ServiceProvider.GetService<InterstitialAdExample>();
+        
         StartCoroutine(DifficultyHUD());
     }
-
+    
     private IEnumerator DifficultyHUD()
     {
         _difficultySelectorHandle = Addressables.LoadAssetAsync<GameObject>(difficultyHUDPrefab);
@@ -163,6 +167,8 @@ public class GameplayManager : MonoBehaviour
 
     private void Start()
     {
+        _interstitialAd.LoadAd();
+        
         SpawnPoint();
     }
 
@@ -177,6 +183,8 @@ public class GameplayManager : MonoBehaviour
         if (!_playerDied)
             return;
 
+        _interstitialAd.ShowAd();
+        
         SavePoints(_currentPoints);
         _eventSystem?.Get<LoadGameOver>()?.Invoke();
     }
@@ -253,6 +261,8 @@ public class GameplayManager : MonoBehaviour
 
     private void OnTimeEnded()
     {
+        _interstitialAd.ShowAd();
+        
         SavePoints(_currentPoints);
 
         if (_currentPoints < minPointsRequired)
