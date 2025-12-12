@@ -1,0 +1,4 @@
+repository "Mobiles_TP2 2025-10-23_00-27-33/KeepItUp@4673806185317@cloud"
+  path "/"
+    br "/main"
+    co "/main"

@@ -9,6 +9,7 @@
     <type fullname="PlayerAssetCreator" preserve="all" />
     <type fullname="PlayerController" preserve="all" />
     <type fullname="PluginTest" preserve="all" />
+    <type fullname="RewardedAdsButton" preserve="all" />
     <type fullname="ScriptableObjects.PlayerSkins.PlayerCurrentSkin" preserve="all" />
     <type fullname="ScriptableObjects.PlayerSkins.PlayerShopSkins" preserve="all" />
     <type fullname="ShopItem" preserve="all" />
