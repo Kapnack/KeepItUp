@@ -24,6 +24,8 @@ public class ShopManager : MonoBehaviour
     private GooglePlayAchievementManager _googlePlayAchievementManager;
     
     private ShopVariables _shopVariables;
+    
+    private RewardedAdsButton _rewardedAdsButton;
     public ShopVariables ShopVariables
     {
         get => _shopVariables;
@@ -48,6 +50,8 @@ public class ShopManager : MonoBehaviour
         
         playerCurrentSkin.currentSkin.equipped = true;
         playerCurrentSkin.currentSkin.unlocked = true;
+        
+        _rewardedAdsButton = GetComponent<RewardedAdsButton>();
     }
 
     private void Start()
@@ -60,6 +64,18 @@ public class ShopManager : MonoBehaviour
             item.UpdateWhenEquipped();
             break;
         }
+        
+        _rewardedAdsButton.LoadAd();
+        
+        _eventSystem.AddListener<AdCompleted>(AddPointsAfterAdd);
+    }
+
+    private void AddPointsAfterAdd()
+    {
+        _shopVariables.CurrentPoints += 20;
+        currentPointsText.text = string.Format(_currentMoneyTextFormat, ShopVariables.CurrentPoints);
+        
+        _rewardedAdsButton.LoadAd();
     }
 
     private void OnDestroy()
@@ -99,5 +115,6 @@ public class ShopManager : MonoBehaviour
     private void OnReturn()
     {
         gameObject.SetActive(false);
+        _eventSystem.Unregister<AdCompleted>();
     }
 }
