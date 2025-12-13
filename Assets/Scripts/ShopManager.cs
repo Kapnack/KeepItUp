@@ -5,6 +5,7 @@ using ScriptableObjects.PlayerSkins;
 using Systems.EventSystem;
 using Systems.GooglePlay;
 using TMPro;
+using Unity.Services.Analytics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,6 +27,9 @@ public class ShopManager : MonoBehaviour
     private ShopVariables _shopVariables;
     
     private RewardedAdsButton _rewardedAdsButton;
+    
+    private AnalyticsManager _analyticsManager;
+    
     public ShopVariables ShopVariables
     {
         get => _shopVariables;
@@ -52,6 +56,8 @@ public class ShopManager : MonoBehaviour
         playerCurrentSkin.currentSkin.unlocked = true;
         
         _rewardedAdsButton = GetComponent<RewardedAdsButton>();
+        
+        _analyticsManager = ServiceProvider.GetService<AnalyticsManager>();
     }
 
     private void Start()
@@ -95,6 +101,23 @@ public class ShopManager : MonoBehaviour
         currentPointsText.text = string.Format(_currentMoneyTextFormat, ShopVariables.CurrentPoints);
         skin.unlocked = true;
         callback?.Invoke();
+
+        ++_shopVariables.SkinsBought;
+
+        CustomEvent skinsBought = new("userBoughtSkin")
+        {
+            { "SkinsBought", _shopVariables.SkinsBought }
+            
+        };
+        
+        _analyticsManager.SendData(skinsBought);
+
+        skinsBought = new CustomEvent("skinBought")
+        {
+            { "skinName", Enum.GetName(typeof(Playerskins), skin.skinName.ToString()) }
+        };
+        
+        _analyticsManager.SendData(skinsBought);
     }
 
     private void TryEquipSkin(PlayerShopSkins skin, Action callback)

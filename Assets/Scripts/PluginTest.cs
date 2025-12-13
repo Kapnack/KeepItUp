@@ -34,7 +34,6 @@ public class PluginTest : MonoBehaviour
     private void OnClear()
     {
         _pluginManager.ClearLogs();
-        label.text = DefaultText;
     }
 
     private void OnUpdateLogs()

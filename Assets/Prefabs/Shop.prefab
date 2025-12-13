@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 1244745814125813355}
   - component: {fileID: 8257909116573308448}
   m_Layer: 5
-  m_Name: Add Button
+  m_Name: Ad Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -630,7 +630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   atlas: {fileID: 100100200, guid: 7fcc718e50dd55246bf6eacd4691734c, type: 3}
-  spriteName: yellow
+  spriteName: Yellow
 --- !u!1 &5649504843013978191
 GameObject:
   m_ObjectHideFlags: 0
@@ -696,7 +696,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Play Add
+  m_text: Play Ad
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8934141f41429a049981472a1a3a279f, type: 2}
   m_sharedMaterial: {fileID: -8604652301014880826, guid: 8934141f41429a049981472a1a3a279f, type: 2}

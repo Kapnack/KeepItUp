@@ -6,6 +6,7 @@ namespace ScriptableObjects
     [CreateAssetMenu(fileName = "Shop Variables", menuName = "ScriptableObjects/Shop Variables")]
     public class ShopVariables : Currency
     {
+        [field: NonSerialized] public int SkinsBought = 0;
         [field: SerializeField] public int BallsPrice { get; private set; }
     }
 }

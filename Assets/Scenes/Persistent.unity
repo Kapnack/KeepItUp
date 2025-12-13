@@ -208,6 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 733914600}
   - component: {fileID: 733914601}
+  - component: {fileID: 733914602}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -265,6 +266,18 @@ MonoBehaviour:
     sceneAsset: {fileID: 102900000, guid: 34e6ceb5d227e4c468ea2928c1da8571, type: 3}
     <Index>k__BackingField: 5
     <Name>k__BackingField: GameWon
+--- !u!114 &733914602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 733914598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d6ebf6dbff9b9f449466907e34bd268, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1032103289
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,7 +497,7 @@ GameObject:
   - component: {fileID: 2117770331}
   - component: {fileID: 2117770333}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: AdsManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -21,7 +21,7 @@ public struct PlatformSettings
 
 public class DifficultyManager : MonoBehaviour
 {
-    public Action<PlatformSettings> Callback;
+    public Action<PlatformSettings, string> Callback;
 
     [SerializeField] private TMP_Text difficultySelected;
     [SerializeField] private Button easyButton;
@@ -31,9 +31,11 @@ public class DifficultyManager : MonoBehaviour
     [SerializeField] private Button rules;
     [SerializeField] private Button closeRules;
     [SerializeField] private GameObject rulesCanvas;
-    
+
     private PlatformSettings _difficulty;
-    
+
+    private string _difficultyName = "Easy";
+
     private void Awake()
     {
         easyButton.onClick.AddListener(OnEasyDifficulty);
@@ -41,7 +43,7 @@ public class DifficultyManager : MonoBehaviour
         hardButton.onClick.AddListener(OnHardDifficulty);
         rules.onClick.AddListener(RulesOpen);
         closeRules.onClick.AddListener(RulesClose);
-            
+
         accept.onClick.AddListener(AcceptDifficulty);
 
         OnEasyDifficulty();
@@ -49,46 +51,52 @@ public class DifficultyManager : MonoBehaviour
 
     private void OnEasyDifficulty()
     {
-        _difficulty = new PlatformSettings(0.0f, 1.0f, new Vector2(3f, 1f),  new Vector2(5f, 1f));
+        _difficulty = new PlatformSettings(0.0f, 1.0f, new Vector2(3f, 1f), new Vector2(5f, 1f));
         difficultySelected.text = "Difficulty Selected: Easy";
-        
+
         easyButton.image.color = Color.gray;
         normalButton.image.color = Color.white;
         hardButton.image.color = Color.white;
+
+        _difficultyName = "Easy";
     }
 
     private void OnNormalDifficulty()
     {
-        _difficulty = new PlatformSettings(20.0f, 1.5f, new Vector2(2.5f, 1f),  new Vector2(4.5f, 1f));
+        _difficulty = new PlatformSettings(20.0f, 1.5f, new Vector2(2.5f, 1f), new Vector2(4.5f, 1f));
         difficultySelected.text = "Difficulty Selected: Normal";
-        
+
         easyButton.image.color = Color.white;
         normalButton.image.color = Color.gray;
         hardButton.image.color = Color.white;
+
+        _difficultyName = "Normal";
     }
 
     private void OnHardDifficulty()
     {
-        _difficulty = new PlatformSettings(60.0f, 2.0f, new Vector2(2f, 1f),  new Vector2(4f, 1f));
+        _difficulty = new PlatformSettings(60.0f, 2.0f, new Vector2(2f, 1f), new Vector2(4f, 1f));
         difficultySelected.text = "Difficulty Selected: Hard";
-        
+
         easyButton.image.color = Color.white;
         normalButton.image.color = Color.white;
         hardButton.image.color = Color.gray;
+
+        _difficultyName = "Hard";
     }
 
     private void RulesOpen()
     {
         rulesCanvas.SetActive(true);
     }
-    
+
     private void RulesClose()
     {
         rulesCanvas.SetActive(false);
     }
-    
+
     private void AcceptDifficulty()
     {
-        Callback?.Invoke(_difficulty);
+        Callback?.Invoke(_difficulty, _difficultyName);
     }
 }

@@ -83,6 +83,8 @@ public class Timer : MonoBehaviour, ITimer
         UpdateTimerText();
         _changeDifficultyTime = time - increaseDifficultyTimeLaps;
     }
+
+    public float GetRemainingTime() =>  timerTime;
 }
 
 public delegate void TimeIsUp();
@@ -91,4 +93,5 @@ public interface ITimer
 {
     public event TimeIsUp TimeIsUp;
     public void SetUpTimer(float time);
+    public float GetRemainingTime();
 }

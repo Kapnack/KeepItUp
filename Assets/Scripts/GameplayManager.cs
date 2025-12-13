@@ -8,6 +8,7 @@ using Systems.EventSystem;
 using Systems.GooglePlay;
 using Systems.Pool;
 using TMPro;
+using Unity.Services.Analytics;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -45,7 +46,11 @@ public class GameplayManager : MonoBehaviour
     private int _currentPoints;
 
     private InterstitialAdExample _interstitialAd;
-    
+
+    private ITimer _timer;
+    private AnalyticsManager _analyticsManager;
+    private string _difficultyName = " ";
+
     private AsyncOperationHandle<GameObject> _difficultySelectorHandle;
     private AsyncOperationHandle<GameObject> _playerAsyncHandle;
     private AsyncOperationHandle<GameObject> _platformAsyncHandle;
@@ -64,10 +69,12 @@ public class GameplayManager : MonoBehaviour
         _eventSystem.AddListener<AddPoint>(OnAddPoints);
 
         _interstitialAd = ServiceProvider.GetService<InterstitialAdExample>();
-        
+
+        _analyticsManager = ServiceProvider.GetService<AnalyticsManager>();
+
         StartCoroutine(DifficultyHUD());
     }
-    
+
     private IEnumerator DifficultyHUD()
     {
         _difficultySelectorHandle = Addressables.LoadAssetAsync<GameObject>(difficultyHUDPrefab);
@@ -88,8 +95,9 @@ public class GameplayManager : MonoBehaviour
         _difficultyHUDGo.transform.position = Vector3.zero;
     }
 
-    private void StartGameplay(PlatformSettings difficultyManager)
+    private void StartGameplay(PlatformSettings difficultyManager, string difficulty)
     {
+        _difficultyName = difficulty;
         StartCoroutine(GameplayStarting(difficultyManager));
     }
 
@@ -110,10 +118,10 @@ public class GameplayManager : MonoBehaviour
 
         Time.timeScale = 1.0f;
 
-        ITimer timer = ServiceProvider.GetService<ITimer>();
+        _timer = ServiceProvider.GetService<ITimer>();
 
-        timer.SetUpTimer(gameTime);
-        timer.TimeIsUp += OnTimeEnded;
+        _timer.SetUpTimer(gameTime);
+        _timer.TimeIsUp += OnTimeEnded;
     }
 
     private IEnumerator CreatePlayer()
@@ -168,7 +176,7 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         _interstitialAd.LoadAd();
-        
+
         SpawnPoint();
     }
 
@@ -183,10 +191,7 @@ public class GameplayManager : MonoBehaviour
         if (!_playerDied)
             return;
 
-        _interstitialAd.ShowAd();
-        
-        SavePoints(_currentPoints);
-        _eventSystem?.Get<LoadGameOver>()?.Invoke();
+        MatchEnded(false);
     }
 
     private void OnDestroy()
@@ -203,7 +208,7 @@ public class GameplayManager : MonoBehaviour
             {
                 Addressables.ReleaseInstance(_playerAsyncHandle);
             }
-           
+
             _playerAsyncHandle = default;
         }
 
@@ -213,6 +218,7 @@ public class GameplayManager : MonoBehaviour
             {
                 Addressables.ReleaseInstance(_platformAsyncHandle);
             }
+
             _platformAsyncHandle = default;
         }
     }
@@ -261,13 +267,29 @@ public class GameplayManager : MonoBehaviour
 
     private void OnTimeEnded()
     {
-        _interstitialAd.ShowAd();
-        
+        MatchEnded(_currentPoints >= minPointsRequired);
+    }
+
+    private void MatchEnded(bool success)
+    {
         SavePoints(_currentPoints);
 
-        if (_currentPoints < minPointsRequired)
-            _eventSystem.Get<LoadGameOver>()?.Invoke();
-        else
+        CustomEvent matchResult = new("matchResult")
+        {
+            { "difficulty", _difficultyName },
+            { "matchWon", success },
+            { "remainingTime", (int)_timer.GetRemainingTime() }
+        };
+        
+        _analyticsManager.SendData(matchResult);
+
+        if (success)
+        {
+            _interstitialAd.ShowAd();
             _eventSystem.Get<LoadWinScene>()?.Invoke();
+        }
+        else
+            _eventSystem.Get<LoadGameOver>()?.Invoke();
+    
     }
 }
