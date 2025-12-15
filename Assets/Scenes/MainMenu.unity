@@ -2431,12 +2431,7 @@ MonoBehaviour:
   creditsButton: {fileID: 1580618488}
   logsButton: {fileID: 284760296}
   exitButton: {fileID: 769041639}
-  shopMenu:
-    m_AssetGUID: 6bb099ba22dbc6d418ee65211d999c99
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+  shopMenu: {fileID: 2967012760194001140, guid: 6bb099ba22dbc6d418ee65211d999c99, type: 3}
   shopVariables: {fileID: 11400000, guid: 83b457f955d997b4795b2c86e85d37a3, type: 2}
   playerCurrentSkin: {fileID: 11400000, guid: b4a2675e4659ebf449fec6179ce7d771, type: 2}
   creditsPrefab:

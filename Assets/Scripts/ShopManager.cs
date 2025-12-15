@@ -114,7 +114,7 @@ public class ShopManager : MonoBehaviour
 
         skinsBought = new CustomEvent("skinBought")
         {
-            { "skinName", Enum.GetName(typeof(Playerskins), skin.skinName.ToString()) }
+            { "skinName", Enum.GetName(typeof(Playerskins), skin.skinName) }
         };
         
         _analyticsManager.SendData(skinsBought);

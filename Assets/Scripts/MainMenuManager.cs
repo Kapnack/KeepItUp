@@ -19,12 +19,9 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button logsButton;
     [SerializeField] private Button exitButton;
 
-    [Header("Shop Menu")] [SerializeField] private AssetReference shopMenu;
+    [Header("Shop Menu")] [SerializeField] private GameObject shopMenu;
     [SerializeField] private ShopVariables shopVariables;
     [SerializeField] private PlayerCurrentSkin playerCurrentSkin;
-
-    private AsyncOperationHandle<GameObject> _shopMenuAsyncHandle;
-    private GameObject _shopMenuGo;
 
     [Header("Credits")] [SerializeField] private AssetReference creditsPrefab;
     private AsyncOperationHandle<GameObject> _creditsAsyncHandle;
@@ -42,6 +39,7 @@ public class MainMenuManager : MonoBehaviour
 
         playButton.onClick.AddListener(() => _eventSystem.Get<LoadGameplayScene>()?.Invoke());
         shopButton.onClick.AddListener(OpenShopMenu);
+
 #if !UNITY_EDITOR && UNITY_ANDROID
         achievementsButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowAchievements);
         leaderboardButton.onClick.AddListener(ServiceProvider.GetService<GooglePlayServiceManager>().ShowRanking);
@@ -50,15 +48,25 @@ public class MainMenuManager : MonoBehaviour
         logsButton.onClick.AddListener(OpenLogs);
         exitButton.onClick.AddListener(ExitGame);
 
-        StartCoroutine(CreateShopMenu());
         StartCoroutine(CreateCredits());
         StartCoroutine(CreateLogs());
     }
 
+    private void Start()
+    {
+        shopMenu = Instantiate(shopMenu);
+        ShopManager shopManager = shopMenu.GetComponent<ShopManager>();
+
+        shopManager.playerCurrentSkin = playerCurrentSkin;
+        shopManager.ShopVariables = shopVariables;
+        
+        shopMenu.SetActive(false);
+    }
+
     private void OnDisable()
     {
-        if (_shopMenuGo != null)
-            Destroy(_shopMenuGo);
+        if (shopMenu != null)
+            Destroy(shopMenu);
 
         if (_creditsGo != null)
             Destroy(_creditsGo);
@@ -66,21 +74,13 @@ public class MainMenuManager : MonoBehaviour
         if (_pluginTestGo != null)
             Destroy(_pluginTestGo);
 
-        if (_shopMenuAsyncHandle.IsValid())
-        {
-            if (_shopMenuAsyncHandle.IsDone)
-            {
-                Addressables.ReleaseInstance(_shopMenuAsyncHandle);
-            }
-            _shopMenuAsyncHandle = default;
-        }
-
         if (_creditsAsyncHandle.IsValid())
         {
             if (_creditsAsyncHandle.IsDone)
             {
                 Addressables.ReleaseInstance(_creditsAsyncHandle);
             }
+
             _creditsAsyncHandle = default;
         }
 
@@ -90,32 +90,9 @@ public class MainMenuManager : MonoBehaviour
             {
                 Addressables.ReleaseInstance(_pluginTestAsyncHandle);
             }
+
             _pluginTestAsyncHandle = default;
         }
-    }
-
-    private IEnumerator CreateShopMenu()
-    {
-        _shopMenuAsyncHandle =
-            Addressables.LoadAssetAsync<GameObject>(shopMenu);
-
-        yield return _shopMenuAsyncHandle;
-
-        if (_shopMenuAsyncHandle.Status != AsyncOperationStatus.Succeeded)
-        {
-            Debug.LogError("Failed to load player prefab.");
-            yield break;
-        }
-
-        _shopMenuGo = Instantiate(_shopMenuAsyncHandle.Result);
-
-        _shopMenuGo.GetComponent<ShopManager>().ShopVariables = shopVariables;
-        _shopMenuGo.GetComponent<ShopManager>().playerCurrentSkin = playerCurrentSkin;
-        _shopMenuGo.SetActive(false);
-
-        SceneManager.MoveGameObjectToScene(_shopMenuGo, gameObject.scene);
-
-        _shopMenuGo.transform.position = Vector3.zero;
     }
 
     private IEnumerator CreateCredits()
@@ -153,7 +130,7 @@ public class MainMenuManager : MonoBehaviour
         }
 
         _pluginTestGo = Instantiate(_pluginTestAsyncHandle.Result);
-        
+
         _pluginTestGo.GetComponent<PluginTest>().SetUp();
         _pluginTestGo.SetActive(false);
 
@@ -164,8 +141,8 @@ public class MainMenuManager : MonoBehaviour
 
     private void OpenShopMenu()
     {
-        if (_shopMenuGo != null)
-            _shopMenuGo.SetActive(true);
+        if (shopMenu != null)
+            shopMenu.SetActive(true);
     }
 
     private void OpenCredits()

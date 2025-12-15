@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: MainMenu
   m_GUID: dbb3c7a7113e3224895fa2d7f93b270d
   m_SerializeEntries:
-  - m_GUID: 6bb099ba22dbc6d418ee65211d999c99
-    m_Address: Assets/Prefabs/Shop.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 71e9b04e36f0b2d4485eac572bb54e71
     m_Address: Assets/Prefabs/SplashScreen.prefab
     m_ReadOnly: 0
